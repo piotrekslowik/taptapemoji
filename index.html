@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Emoji IQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+  /* ═══════════════════════════════════════════════
+     PIXEL ARCADE — v0.4 (Variant C)
+     Press Start 2P + VT323 · neon glow · scanlines
+  ═══════════════════════════════════════════════ */
+  :root {
+    --bg:      #050810;
+    --panel:   rgba(15,20,40,.75);
+    --border:  #2a2f4a;
+    --accent:  #FFEE00;
+    --correct: #00E676;
+    --wrong:   #FF4081;
+    --txt:     #e8eaf6;
+    --gray:    #6272a4;
+    --surface: #0f1428;
+    --cyan:    #5DE7FF;
+    --pink:    #FF4081;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { width: 100%; height: 100%; background: var(--bg); overflow: hidden; touch-action: manipulation; user-select: none; }
+  body { font-family: 'VT323', monospace; color: var(--txt); }
+
+  .screen {
+    position: fixed; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background:
+      repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 1px, transparent 1px 4px),
+      radial-gradient(ellipse 100% 80% at 50% 0%, #1a2148 0%, #0a0e1a 60%, #050810 100%);
+  }
+  .screen.hidden { display: none; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    background: var(--accent); color: #050810;
+    font-family: 'Press Start 2P', monospace; font-size: clamp(9px, 2.5vw, 12px);
+    text-transform: uppercase; border: none; padding: 16px 24px;
+    cursor: pointer; width: 100%; max-width: 320px;
+    box-shadow: 4px 4px 0 var(--pink);
+  }
+  .btn:active { opacity: .85; transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--pink); }
+  .btn.outline {
+    background: transparent; border: 3px solid var(--cyan); color: var(--cyan);
+    margin-top: 10px; font-family: 'Press Start 2P', monospace; font-size: clamp(8px, 2.2vw, 11px);
+    padding: 14px 24px; min-height: 44px; box-shadow: none;
+  }
+  .btn.ghost {
+    background: transparent; border: 2px solid #2a2f4a; color: #4a5080;
+    font-family: 'VT323', monospace; font-size: 16px; letter-spacing: 2px;
+    padding: 7px 18px; width: auto; text-transform: uppercase; cursor: pointer; box-shadow: none;
+  }
+
+  /* ── TIER PILLS ── */
+  .tier-legend { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; max-width: 320px; }
+  .tier-pill { font-family: 'VT323', monospace; font-size: 18px; letter-spacing: 1px; padding: 2px 9px; border: 2px solid; }
+  .tp5 { color: #FF6B6B; border-color: #FF6B6B; }
+  .tp4 { color: #FFEE00; border-color: #FFEE00; }
+  .tp3 { color: #00E676; border-color: #00E676; }
+  .tp2 { color: #5DE7FF; border-color: #5DE7FF; }
+  .tp1 { color: #CC77FF; border-color: #CC77FF; }
+  .tp0 { color: #6272a4; border-color: #6272a4; }
+
+  /* ── HOME ── */
+  #intro { justify-content: flex-start; padding: 0; gap: 0; }
+  .home-hdr {
+    width: 100%; flex-shrink: 0; padding: 20px 20px 16px;
+    border-bottom: 2px solid var(--border);
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+  }
+  .home-tagline { font-family: 'VT323', monospace; font-size: 16px; letter-spacing: 3px; text-transform: uppercase; color: var(--gray); margin-bottom: 8px; }
+  .home-tte { display: flex; align-items: center; gap: 0; margin-bottom: 6px; }
+  .home-tap {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(27px, 7.8vw, 41px);
+    color: var(--accent); text-transform: uppercase;
+    text-shadow: 0 0 12px rgba(255,238,0,.55), 3px 3px 0 var(--pink);
+  }
+  .home-dot { color: var(--border); margin: 0 12px; }
+  .home-emoji-word {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(32px, 10.2vw, 50px);
+    color: var(--accent); text-transform: uppercase; margin-bottom: 16px;
+    text-shadow: 0 0 14px rgba(255,238,0,.55), 3px 3px 0 var(--pink);
+    line-height: 1.5;
+  }
+  .home-deco { font-size: 36px; letter-spacing: 8px; }
+  .home-modes-lbl { font-family: 'VT323', monospace; font-size: 20px; letter-spacing: 3px; text-transform: uppercase; color: var(--gray); padding: 10px 18px 4px; flex-shrink: 0; }
+
+  /* ══════════════════════════════════════════════
+     GAME SCREEN
+  ══════════════════════════════════════════════ */
+  #game-iq { justify-content: flex-start; padding: 0 0 88px; }
+
+  .g-score-wrap {
+    width: 100%; display: flex; flex-direction: column;
+    align-items: center; padding: 10px 18px 0; gap: 4px;
+  }
+  .g-score {
+    font-family: 'VT323', monospace; font-size: 68px; line-height: 1;
+    color: var(--accent); text-shadow: 0 0 16px rgba(255,238,0,.5);
+  }
+.g-lives { display: flex; gap: 4px; justify-content: flex-end; align-items: center; font-size: 26px; line-height: 1; }
+
+  .g-meta { display: flex; justify-content: flex-start; align-items: center; padding: 6px 16px 0; width: 100%; gap: 7px; }
+  .g-puzzle { font-family: 'VT323', monospace; font-size: 20px; letter-spacing: 2px; text-transform: uppercase; color: var(--gray); }
+  .g-tier-badge { font-family: 'VT323', monospace; font-size: 18px; letter-spacing: 1px; padding: 1px 7px; border: 2px solid; }
+
+  .grid-wrap { display: flex; flex-direction: column; width: 100%; flex-shrink: 0; margin-top: auto; gap: 10px; }
+  .g-action-bottom { display: flex; justify-content: center; padding: 12px 18px 24px; }
+  .g-mult-wrap { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .g-mult-lbl { font-family: 'VT323', monospace; font-size: 16px; letter-spacing: 3px; text-transform: uppercase; color: var(--gray); }
+  .g-mult {
+    font-family: 'VT323', monospace; font-size: 38px; color: var(--accent);
+    background: rgba(255,238,0,.07); padding: 2px 16px;
+    min-width: 80px; text-align: center;
+    text-shadow: 0 0 8px rgba(255,238,0,.4);
+  }
+
+  /* ── SEGMENTED PIXEL TIMER (fixed bottom) ── */
+  .timer-wrap {
+    position: fixed; bottom: 64px; left: 0; right: 0; height: 14px;
+    background: #0a0e1a; z-index: 10;
+    display: flex; gap: 2px; padding: 2px;
+  }
+  .timer-seg { flex: 1; height: 100%; background: #1a2040; border-radius: 0; }
+  .timer-seg.fill { background: var(--cyan); box-shadow: 0 0 6px rgba(93,231,255,.65); }
+  .timer-seg.fill.warn { background: var(--pink); box-shadow: 0 0 6px rgba(255,64,129,.65); }
+
+  .content-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 16px; width: 100%; min-height: 0; padding: 6px 0; }
+  .pts-earned {
+    font-family: 'VT323', monospace; font-size: clamp(2.2rem, 9vw, 2.8rem);
+    color: var(--accent); line-height: 1; min-height: 2.8rem; text-align: center;
+    transition: opacity .2s; text-shadow: 0 0 8px rgba(255,238,0,.45);
+  }
+
+  .name-area { width: 100%; padding: 0 20px; display: flex; align-items: center; justify-content: center; }
+  #emoji-name { font-family: 'VT323', monospace; font-size: clamp(2.2rem, 8.5vw, 3rem); text-align: center; line-height: 1.35; white-space: nowrap; overflow: hidden; transition: opacity .12s; }
+  #emoji-name .colon { color: var(--cyan); }
+  #emoji-name .word  { color: var(--txt); }
+  #emoji-name.blind-hidden .colon { color: var(--gray); }
+  #emoji-name.blind-hidden .word  { color: var(--gray); vertical-align: middle; letter-spacing: 0.05em; }
+
+  .grid-area { padding: 0 14px; display: flex; justify-content: center; flex-shrink: 0; }
+  #emoji-grid { display: grid; gap: 8px; justify-content: center; }
+  .emoji-cell {
+    width: var(--cs, 128px); height: var(--cs, 128px);
+    background: var(--surface); border: 3px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: var(--cfs, 56px); cursor: pointer; user-select: none;
+    transition: border-color .1s, background .1s, transform .08s, box-shadow .1s;
+    flex-shrink: 0; position: relative; touch-action: manipulation;
+  }
+  .emoji-cell:active  { transform: scale(.88); }
+  .emoji-cell.correct { border-color: var(--correct); background: rgba(0,230,118,.12); box-shadow: 0 0 14px rgba(0,230,118,.45); }
+  .emoji-cell.wrong   { border-color: var(--wrong);   background: rgba(255,64,129,.12); box-shadow: 0 0 14px rgba(255,64,129,.45); }
+  .emoji-cell.reveal  { border-color: var(--correct); background: rgba(0,230,118,.06); box-shadow: 0 0 8px rgba(0,230,118,.25); }
+  .emoji-cell.disabled{ pointer-events: none; opacity: 0.28; }
+  /* odpowiedzi zawsze pełna widoczność, nawet gdy disabled */
+  .emoji-cell.correct.disabled,
+  .emoji-cell.wrong.disabled,
+  .emoji-cell.reveal.disabled { opacity: 1; }
+  .emoji-cell.correct::after { content:'✓'; position:absolute; top:3px; right:5px; font-family:'VT323',monospace; font-size:18px; color:var(--correct); line-height:1; }
+  .emoji-cell.wrong::after   { content:'✗'; position:absolute; top:3px; right:5px; font-family:'VT323',monospace; font-size:18px; color:var(--wrong);   line-height:1; }
+
+  /* ── ROUND BANNER ── */
+  #banner { position: fixed; inset: 0; background: rgba(5,8,16,.97); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; z-index: 100; }
+  #banner.hidden { display: none; }
+  .banner-label { font-family: 'VT323', monospace; font-size: 22px; letter-spacing: 4px; text-transform: uppercase; color: var(--gray); }
+  #banner-title {
+    font-family: 'Press Start 2P', monospace; font-size: clamp(16px, 5.5vw, 24px);
+    color: var(--accent); line-height: 1.5; text-align: center;
+    text-shadow: 0 0 14px rgba(255,238,0,.55), 3px 3px 0 var(--pink);
+  }
+  #banner-sub { font-family: 'VT323', monospace; font-size: 22px; color: var(--gray); }
+  #banner-tier-wrap { margin-top: 4px; }
+  #banner-tier { font-family: 'VT323', monospace; font-size: 22px; letter-spacing: 2px; padding: 5px 16px; border: 2px solid; }
+  #banner-count {
+    font-family: 'Press Start 2P', monospace; font-size: clamp(60px, 18vw, 96px);
+    color: var(--cyan); line-height: 1; min-width: 1.2ch; text-align: center; margin-top: 8px;
+    text-shadow: 0 0 24px rgba(93,231,255,.65);
+  }
+  @keyframes countPop { 0%{transform:scale(1.4);opacity:1} 70%{transform:scale(1.0);opacity:1} 100%{transform:scale(0.8);opacity:0} }
+  .count-pop { animation: countPop .82s ease forwards; }
+
+  /* ── FEEDBACK ── */
+  #feedback { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 50; opacity: 0; font-family: 'VT323', monospace; font-size: 52px; transition: opacity .15s; }
+  #feedback.show { opacity: 1; }
+
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-6px)} 80%{transform:translateX(6px)} }
+  .shake { animation: shake .32s ease; }
+
+  /* ── FOCUS VISIBLE ── */
+  .btn:focus-visible,
+  .btn.outline:focus-visible,
+  .ms-back:focus-visible,
+  .mode-card:focus-visible,
+  .emoji-cell:focus-visible,
+  .rev-choice:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+  /* ══════════════════════════════════════════════
+     MODE SELECT
+  ══════════════════════════════════════════════ */
+  .ms-hdr { width:100%; display:flex; align-items:center; justify-content:space-between; padding:12px 18px; flex-shrink:0; border-bottom:2px solid var(--border); }
+  .ms-title { font-family:'Press Start 2P',monospace; font-size:12px; color:var(--accent); }
+  .ms-back { background:transparent; border:none; color:var(--gray); font-size:26px; cursor:pointer; padding:4px 8px; min-width:44px; min-height:44px; display:flex; align-items:center; justify-content:center; }
+  .ms-body { flex:1; width:100%; padding:10px 14px 14px; display:flex; flex-direction:column; gap:6px; overflow-y:auto; min-height:0; -webkit-overflow-scrolling:touch; }
+  .mode-card {
+    width:100%; background:var(--panel);
+    border:3px solid var(--border);
+    padding:11px 14px; cursor:pointer;
+    display:flex; align-items:center; gap:12px;
+    transition:border-color .12s, box-shadow .12s;
+    box-shadow: 0 0 0 1px #050810 inset;
+  }
+  .mode-card:active { border-color:var(--cyan); box-shadow:0 0 0 1px #050810 inset, 0 0 18px rgba(93,231,255,.22); }
+  .mode-card.locked { opacity:.38; pointer-events:none; }
+  .mc-icon { font-size:28px; width:36px; text-align:center; flex-shrink:0; }
+  .mc-body { flex:1; min-width:0; }
+  .mc-name { font-family:'VT323',monospace; font-size:22px; letter-spacing:.5px; color:var(--txt); }
+  .mc-desc { font-family:'VT323',monospace; font-size:17px; color:var(--gray); margin-top:1px; line-height:1.25; }
+  .mc-streak { font-family:'VT323',monospace; font-size:18px; color:var(--accent); margin-top:2px; }
+  .mc-badge { font-family:'VT323',monospace; font-size:16px; letter-spacing:1px; text-transform:uppercase; padding:2px 7px; border:2px solid; flex-shrink:0; white-space:nowrap; }
+  .badge-new   { color:var(--correct); border-color:var(--correct); }
+  .badge-today { color:var(--accent);  border-color:var(--accent); }
+  .badge-done  { color:var(--gray);    border-color:var(--border); }
+
+  /* ── MASTERY ROW ── */
+  #mastery-row { display:none; width:100%; padding:4px 16px 0; }
+  #mastery-info { font-family:'VT323',monospace; font-size:18px; letter-spacing:1px; color:var(--gray); text-transform:uppercase; }
+  #mastery-info span { color:var(--accent); }
+
+  /* ── REVERSE MODE ── */
+  #rev-emoji-area { display:none; font-size:88px; text-align:center; line-height:1; padding:6px 0; flex-shrink:0; }
+  #rev-choices { display:none; flex-direction:column; gap:8px; width:100%; padding:0 14px; }
+  .rev-choice {
+    background:var(--panel); border:3px solid var(--border);
+    padding:12px 40px 12px 16px;
+    font-family:'VT323',monospace; font-size:clamp(1.2rem, 4vw, 1.4rem);
+    cursor:pointer; text-align:center;
+    transition:border-color .1s, background .1s, box-shadow .1s;
+    position:relative; touch-action:manipulation;
+    min-height:44px; display:flex; align-items:center; justify-content:center;
+  }
+  .rev-choice .rc { color:var(--cyan); }
+  .rev-choice:active { background:rgba(93,231,255,.08); border-color:var(--cyan); }
+  .rev-choice.correct { border-color:var(--correct); background:rgba(0,230,118,.12); pointer-events:none; box-shadow:0 0 12px rgba(0,230,118,.35); }
+  .rev-choice.wrong   { border-color:var(--wrong);   background:rgba(255,64,129,.12); pointer-events:none; box-shadow:0 0 12px rgba(255,64,129,.35); }
+  .rev-choice.reveal  { border-color:var(--correct); background:rgba(0,230,118,.06); pointer-events:none; }
+  .rev-choice.disabled{ pointer-events:none; opacity:.42; }
+  .rev-choice.correct::after { content:'✓'; position:absolute; right:14px; font-family:'VT323',monospace; font-size:22px; color:var(--correct); }
+  .rev-choice.wrong::after   { content:'✗'; position:absolute; right:14px; font-family:'VT323',monospace; font-size:22px; color:var(--wrong); }
+
+  /* ── MODE TAG ── */
+  #mode-tag { font-family:'VT323',monospace; font-size:18px; letter-spacing:2px; text-transform:uppercase; color:var(--gray); padding:1px 7px; border:2px solid var(--border); }
+
+  /* ══════════════════════════════════════════════
+     GAME OVER
+  ══════════════════════════════════════════════ */
+  #gameover { gap: 14px; padding: 32px 24px; text-align: center; }
+  .go-score {
+    font-family: 'VT323', monospace; font-size: clamp(4.5rem, 20vw, 7rem);
+    color: var(--accent); letter-spacing: -2px; line-height: 1;
+    text-shadow: 0 0 20px rgba(255,238,0,.5);
+  }
+  .go-label-top { font-family: 'Press Start 2P', monospace; font-size: clamp(8px, 2.2vw, 11px); letter-spacing: 2px; text-transform: uppercase; color: var(--pink); }
+  #go-new-best {
+    font-family: 'Press Start 2P', monospace; font-size: clamp(8px, 2.2vw, 10px);
+    letter-spacing: 2px; color: var(--accent); text-transform: uppercase;
+    height: 16px; transition: opacity .3s;
+    animation: pxBlink 1s steps(2) infinite;
+  }
+  @keyframes pxBlink { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .go-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; width: 100%; max-width: 300px; }
+  .go-stat { background: var(--panel); border: 2px solid var(--border); padding: 12px; }
+  .go-stat .val { font-family: 'VT323', monospace; font-size: 38px; color: var(--txt); line-height: 1; }
+  .go-stat .lbl { font-family: 'VT323', monospace; font-size: 17px; letter-spacing: 2px; text-transform: uppercase; color: var(--gray); margin-top: 2px; }
+  #go-mode-tag { font-family:'VT323',monospace; font-size:20px; letter-spacing:2px; text-transform:uppercase; color:var(--gray); padding:3px 10px; border:2px solid var(--border); }
+  #go-extra    { font-family:'VT323',monospace; font-size:20px; color:var(--accent); letter-spacing:1px; min-height:20px; }
+
+  /* ══════════════════════════════════════════════
+     HOW TO PLAY
+  ══════════════════════════════════════════════ */
+</style>
+</head>
+<body>
+
+<!-- ═══ HOME (intro + mode select) ══════════════════ -->
+<div id="intro" class="screen">
+  <div class="home-hdr">
+<div class="home-tte">
+      <span class="home-tap">TAP</span><span class="home-dot">·</span><span class="home-tap">TAP</span>
+    </div>
+    <div class="home-emoji-word">EMOJI</div>
+    <div class="home-deco">🔥 🎯 💎 🧠</div>
+  </div>
+  <div class="home-modes-lbl">CHOOSE MODE</div>
+  <div class="ms-body" id="ms-cards"></div>
+</div>
+
+<!-- ═══ HOW TO PLAY ══════════════════════════════════ -->
+<!-- ═══ GAME IQ ══════════════════════════════════════ -->
+<div id="game-iq" class="screen hidden">
+  <div class="g-score-wrap">
+    <div class="g-score" id="score-display">0</div>
+    <div class="g-lives" id="lives-display"></div>
+  </div>
+  <div class="g-meta">
+    <div id="mode-tag" style="display:none"></div>
+  </div>
+  <div id="mastery-row"><div id="mastery-info">0 mastered</div></div>
+  <div class="content-area">
+    <div id="pts-earned" class="pts-earned"></div>
+    <div class="grid-wrap">
+      <div class="timer-wrap" id="timer-wrap"></div>
+      <div class="name-area"><div id="emoji-name"></div></div>
+      <div id="rev-emoji-area"></div>
+      <div class="grid-area"><div id="emoji-grid"></div></div>
+      <div id="rev-choices"></div>
+      <div class="g-action-bottom"><div class="g-mult-wrap"><div class="g-mult-lbl">MULTIPLIER</div><div class="g-mult" id="mult-display">×5.0</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ROUND BANNER ════════════════════════════════ -->
+<div id="banner" class="hidden">
+  <div class="banner-label" id="banner-label">New Round</div>
+  <div id="banner-title">ROUND 1</div>
+  <div id="banner-sub">2 emoji · base 100 pts</div>
+  <div id="banner-tier-wrap"><div id="banner-tier">POPULAR</div></div>
+  <div id="banner-count">3</div>
+</div>
+
+<!-- ═══ GAME OVER ════════════════════════════════════ -->
+<div id="gameover" class="screen hidden">
+  <div id="go-mode-tag">CLASSIC</div>
+  <div class="go-label-top">Final Score</div>
+  <div class="go-score" id="go-score">0</div>
+  <div id="go-new-best" style="display:none">★ NEW RECORD</div>
+  <div id="go-extra"></div>
+  <div class="go-stats">
+    <div class="go-stat"><div class="val" id="go-s1">—</div><div class="lbl">Rounds</div></div>
+    <div class="go-stat"><div class="val" id="go-s2">—</div><div class="lbl">Correct</div></div>
+    <div class="go-stat"><div class="val" id="go-s3">—</div><div class="lbl">Best Streak</div></div>
+    <div class="go-stat"><div class="val" id="go-s4">—</div><div class="lbl">Hardest</div></div>
+  </div>
+  <button class="btn" id="go-btn-restart" onclick="restartCurrentMode()">PLAY AGAIN</button>
+  <button class="btn outline" onclick="showScreen('intro');renderModeSelect()">MENU</button>
+</div>
+
+<!-- ═══ FEEDBACK ═════════════════════════════════════ -->
+<div id="feedback"></div>
+
+<!-- ═══ CHEAT HELPER ════════════════════════════════ -->
+<div id="cheat-trigger" onclick="cheatShow()" title="show answer"
+  style="position:fixed;bottom:10px;right:12px;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#2a2a2a;cursor:pointer;z-index:500;padding:4px;">answer</div>
+
+<div id="cheat-modal" onclick="if(event.target===this)cheatHide()"
+  style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:600;align-items:center;justify-content:center;">
+  <div style="background:#141414;border:1px solid #2a2a2a;padding:28px 28px 22px;max-width:300px;width:88%;text-align:center;position:relative;">
+    <div style="font-size:9px;letter-spacing:4px;color:#444;text-transform:uppercase;margin-bottom:18px;">ANSWER</div>
+    <div id="cheat-content" style="line-height:1.6;"></div>
+    <button class="btn ghost" onclick="cheatHide()" style="margin-top:20px;display:block;width:100%;">CLOSE</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  EMOJI POOL  {e, n: shortcode, t: tier 1–5}
+// ══════════════════════════════════════════════════════
+const POOL = [
+  // ── T5 top ~100 ───────────────────────────────────
+  {e:'😂',n:'joy',t:5},{e:'❤️',n:'heart',t:5},{e:'🔥',n:'fire',t:5},{e:'😭',n:'sob',t:5},
+  {e:'✨',n:'sparkles',t:5},{e:'🥺',n:'pleading_face',t:5},{e:'😍',n:'heart_eyes',t:5},
+  {e:'🙏',n:'pray',t:5},{e:'😊',n:'blush',t:5},{e:'👍',n:'+1',t:5},{e:'😘',n:'kissing_heart',t:5},
+  {e:'🎉',n:'tada',t:5},{e:'🤔',n:'thinking',t:5},{e:'😅',n:'sweat_smile',t:5},
+  {e:'🥹',n:'holding_back_tears',t:5},{e:'😁',n:'grin',t:5},{e:'💀',n:'skull',t:5},
+  {e:'☠️',n:'skull_crossbones',t:5},{e:'🤣',n:'rofl',t:5},{e:'💕',n:'two_hearts',t:5},
+  {e:'😎',n:'sunglasses',t:5},{e:'👀',n:'eyes',t:4},{e:'💪',n:'muscle',t:5},
+  {e:'🤩',n:'star_struck',t:5},{e:'😆',n:'laughing',t:5},{e:'🙄',n:'roll_eyes',t:5},
+  {e:'😴',n:'sleeping',t:5},{e:'🤦',n:'facepalm',t:5},{e:'😒',n:'unamused',t:5},
+  {e:'😋',n:'yum',t:5},{e:'🤗',n:'hugs',t:5},{e:'😌',n:'relieved',t:5},
+  {e:'😜',n:'stuck_out_tongue_winking_eye',t:5},{e:'🥲',n:'smiling_face_with_tear',t:5},
+  {e:'😔',n:'pensive',t:5},{e:'🤭',n:'hand_over_mouth',t:5},{e:'😤',n:'triumph',t:5},
+  {e:'😬',n:'grimacing',t:5},{e:'🤯',n:'exploding_head',t:5},{e:'🥵',n:'hot_face',t:5},
+  {e:'🥶',n:'cold_face',t:5},{e:'😱',n:'scream',t:5},{e:'😡',n:'rage',t:5},
+  {e:'🤮',n:'vomiting_face',t:5},{e:'🥴',n:'woozy_face',t:5},{e:'😵',n:'dizzy_face',t:5},
+  {e:'🤑',n:'money_mouth_face',t:5},{e:'😈',n:'smiling_imp',t:5},{e:'💔',n:'broken_heart',t:5},
+  {e:'🖤',n:'black_heart',t:5},{e:'💜',n:'purple_heart',t:5},{e:'💙',n:'blue_heart',t:5},
+  {e:'💚',n:'green_heart',t:5},{e:'🧡',n:'orange_heart',t:5},{e:'🤍',n:'white_heart',t:5},
+  {e:'💛',n:'yellow_heart',t:5},{e:'🤎',n:'brown_heart',t:5},{e:'💕',n:'two_hearts',t:5},
+  {e:'💞',n:'revolving_hearts',t:5},{e:'💓',n:'heartbeat',t:5},{e:'💗',n:'heartpulse',t:5},
+  {e:'💖',n:'sparkling_heart',t:5},{e:'💘',n:'cupid',t:5},{e:'💝',n:'gift_heart',t:5},
+  {e:'😚',n:'kissing_closed_eyes',t:5},{e:'😐',n:'neutral_face',t:5},
+  {e:'😑',n:'expressionless',t:5},{e:'😶',n:'no_mouth',t:5},{e:'😮',n:'open_mouth',t:5},
+  {e:'😲',n:'astonished',t:5},{e:'🤐',n:'zipper_mouth_face',t:5},
+  {e:'🤫',n:'shushing_face',t:5},{e:'🤥',n:'lying_face',t:5},{e:'🫠',n:'melting_face',t:5},
+  {e:'🥸',n:'disguised_face',t:5},{e:'🤓',n:'nerd_face',t:5},{e:'👋',n:'wave',t:5},
+  {e:'🤙',n:'call_me_hand',t:5},{e:'👏',n:'clap',t:5},{e:'🙌',n:'raised_hands',t:5},
+  {e:'🤝',n:'handshake',t:5},{e:'👌',n:'ok_hand',t:5},{e:'✌️',n:'v',t:5},
+  {e:'🤞',n:'crossed_fingers',t:5},{e:'🤟',n:'love_you_gesture',t:5},
+  {e:'🤘',n:'the_horns',t:5},{e:'👎',n:'-1',t:5},{e:'✊',n:'fist',t:5},
+  {e:'👊',n:'oncoming_fist',t:5},{e:'🫵',n:'point_at_viewer',t:5},
+  {e:'🫡',n:'saluting_face',t:5},{e:'🥰',n:'smiling_face_3_hearts',t:5},
+  {e:'😛',n:'stuck_out_tongue',t:5},{e:'😝',n:'stuck_out_tongue_closed_eyes',t:5},
+  {e:'🤪',n:'zany_face',t:5},{e:'🫢',n:'face_with_open_eyes_hand_over_mouth',t:5},
+  {e:'🫣',n:'face_with_peeking_eye',t:5},{e:'🫤',n:'face_with_diagonal_mouth',t:5},
+  {e:'😠',n:'angry',t:5},{e:'😳',n:'flushed',t:5},
+
+  // ── T4 znane ──────────────────────────────────────
+  {e:'🌈',n:'rainbow',t:4},{e:'⭐',n:'star',t:4},{e:'💎',n:'gem',t:4},
+  {e:'👑',n:'crown',t:4},{e:'🎮',n:'video_game',t:4},{e:'🎂',n:'birthday',t:4},
+  {e:'🎁',n:'gift',t:4},{e:'🌸',n:'cherry_blossom',t:4},{e:'🍕',n:'pizza',t:4},
+  {e:'🚀',n:'rocket',t:4},{e:'🐶',n:'dog',t:4},{e:'🦋',n:'butterfly',t:4},
+  {e:'💫',n:'dizzy',t:4},{e:'🎵',n:'musical_note',t:4},{e:'👻',n:'ghost',t:4},
+  {e:'🌊',n:'ocean',t:4},{e:'🍀',n:'four_leaf_clover',t:4},{e:'🤡',n:'clown_face',t:4},
+  {e:'🌙',n:'crescent_moon',t:4},{e:'🌟',n:'star2',t:4},{e:'💥',n:'boom',t:4},
+  {e:'🎶',n:'notes',t:4},{e:'🌺',n:'hibiscus',t:4},{e:'🌻',n:'sunflower',t:4},
+  {e:'🌹',n:'rose',t:4},{e:'🌷',n:'tulip',t:4},{e:'🍁',n:'maple_leaf',t:4},
+  {e:'🍂',n:'fallen_leaf',t:4},{e:'🍃',n:'leaves',t:4},{e:'🍄',n:'mushroom',t:4},
+  {e:'🌿',n:'herb',t:4},{e:'🐱',n:'cat',t:4},{e:'🐭',n:'mouse',t:4},
+  {e:'🐹',n:'hamster',t:4},{e:'🐰',n:'rabbit',t:4},{e:'🦊',n:'fox_face',t:4},
+  {e:'🐻',n:'bear',t:4},{e:'🐼',n:'panda_face',t:4},{e:'🐨',n:'koala',t:4},
+  {e:'🐯',n:'tiger',t:4},{e:'🦁',n:'lion',t:4},{e:'🐮',n:'cow',t:4},
+  {e:'🐷',n:'pig',t:4},{e:'🐸',n:'frog',t:4},{e:'🐵',n:'monkey_face',t:4},
+  {e:'🐔',n:'chicken',t:4},{e:'🐧',n:'penguin',t:4},{e:'🦄',n:'unicorn',t:4},
+  {e:'🐝',n:'bee',t:4},{e:'🍎',n:'apple',t:4},{e:'🍊',n:'tangerine',t:4},
+  {e:'🍋',n:'lemon',t:4},{e:'🍇',n:'grapes',t:4},{e:'🍓',n:'strawberry',t:4},
+  {e:'🍉',n:'watermelon',t:4},{e:'🍌',n:'banana',t:4},{e:'🍒',n:'cherries',t:4},
+  {e:'🍑',n:'peach',t:4},{e:'🍍',n:'pineapple',t:4},{e:'🥭',n:'mango',t:4},
+  {e:'🍔',n:'hamburger',t:4},{e:'🍟',n:'fries',t:4},{e:'🌮',n:'taco',t:4},
+  {e:'🍣',n:'sushi',t:4},{e:'🍩',n:'doughnut',t:4},{e:'🍦',n:'icecream',t:4},
+  {e:'☕',n:'coffee',t:4},{e:'🧋',n:'bubble_tea',t:4},{e:'🍺',n:'beer',t:4},
+  {e:'🍷',n:'wine_glass',t:4},{e:'🚗',n:'car',t:4},{e:'✈️',n:'airplane',t:4},
+  {e:'🏠',n:'house',t:4},{e:'🏖️',n:'beach_umbrella',t:4},{e:'🏔️',n:'mountain_snow',t:4},
+  {e:'🎃',n:'jack_o_lantern',t:4},{e:'🎄',n:'christmas_tree',t:4},
+  {e:'🎆',n:'fireworks',t:4},{e:'🎊',n:'confetti_ball',t:4},{e:'🎈',n:'balloon',t:4},
+  {e:'🎀',n:'ribbon',t:4},{e:'🏆',n:'trophy',t:4},{e:'⚽',n:'soccer',t:4},
+  {e:'🏀',n:'basketball',t:4},{e:'🎾',n:'tennis',t:4},{e:'💻',n:'computer',t:4},
+  {e:'📱',n:'iphone',t:4},{e:'📸',n:'camera_flash',t:4},{e:'🎸',n:'guitar',t:4},
+  {e:'🥁',n:'drum',t:4},{e:'🌍',n:'earth_africa',t:4},{e:'🔮',n:'crystal_ball',t:4},
+  {e:'🧸',n:'teddy_bear',t:4},{e:'🎯',n:'dart',t:4},{e:'🧩',n:'jigsaw',t:4},
+  {e:'🪄',n:'magic_wand',t:4},{e:'💡',n:'bulb',t:4},{e:'📚',n:'books',t:4},
+
+  // ── T3 typowe ─────────────────────────────────────
+  {e:'🌋',n:'volcano',t:3},{e:'🌵',n:'cactus',t:3},{e:'🔬',n:'microscope',t:3},
+  {e:'🪞',n:'mirror',t:3},{e:'🐘',n:'elephant',t:3},{e:'🦒',n:'giraffe',t:3},
+  {e:'🦓',n:'zebra',t:3},{e:'🦛',n:'hippopotamus',t:3},{e:'🐆',n:'leopard',t:3},
+  {e:'🦅',n:'eagle',t:3},{e:'🦚',n:'peacock',t:3},{e:'🦩',n:'flamingo',t:3},
+  {e:'🦢',n:'swan',t:3},{e:'🦉',n:'owl',t:3},{e:'🦇',n:'bat',t:3},
+  {e:'🐺',n:'wolf',t:3},{e:'🐴',n:'horse',t:3},{e:'🦌',n:'deer',t:3},
+  {e:'🐑',n:'sheep',t:3},{e:'🐐',n:'goat',t:3},{e:'🦙',n:'llama',t:3},
+  {e:'🐪',n:'dromedary_camel',t:3},{e:'🦘',n:'kangaroo',t:3},{e:'🦦',n:'otter',t:3},
+  {e:'🦥',n:'sloth',t:3},{e:'🦔',n:'hedgehog',t:3},{e:'🐊',n:'crocodile',t:3},
+  {e:'🐢',n:'turtle',t:3},{e:'🦎',n:'lizard',t:3},{e:'🐍',n:'snake',t:3},
+  {e:'🦕',n:'sauropod',t:3},{e:'🦖',n:'t_rex',t:3},{e:'🐙',n:'octopus',t:3},
+  {e:'🦑',n:'squid',t:3},{e:'🦀',n:'crab',t:3},{e:'🦞',n:'lobster',t:3},
+  {e:'🐠',n:'tropical_fish',t:3},{e:'🐳',n:'whale',t:3},{e:'🐬',n:'dolphin',t:3},
+  {e:'🦈',n:'shark',t:3},{e:'🥐',n:'croissant',t:3},{e:'🧀',n:'cheese',t:3},
+  {e:'🥚',n:'egg',t:3},{e:'🧇',n:'waffle',t:3},{e:'🥓',n:'bacon',t:3},
+  {e:'🌭',n:'hotdog',t:3},{e:'🥪',n:'sandwich',t:3},{e:'🍜',n:'ramen',t:3},
+  {e:'🍱',n:'bento',t:3},{e:'🍛',n:'curry',t:3},{e:'🍝',n:'spaghetti',t:3},
+  {e:'🍙',n:'rice_ball',t:3},{e:'🍰',n:'cake',t:3},{e:'🧁',n:'cupcake',t:3},
+  {e:'🍫',n:'chocolate_bar',t:3},{e:'🍬',n:'candy',t:3},{e:'🍭',n:'lollipop',t:3},
+  {e:'🍾',n:'champagne',t:3},{e:'🧃',n:'beverage_box',t:3},{e:'🚲',n:'bike',t:3},
+  {e:'🚕',n:'taxi',t:3},{e:'🚂',n:'steam_locomotive',t:3},{e:'⛵',n:'sailboat',t:3},
+  {e:'🚁',n:'helicopter',t:3},{e:'🛸',n:'flying_saucer',t:3},
+  {e:'🗼',n:'tokyo_tower',t:3},{e:'🗽',n:'statue_of_liberty',t:3},
+  {e:'🏰',n:'european_castle',t:3},{e:'⛺',n:'tent',t:3},
+  {e:'🎠',n:'carousel_horse',t:3},{e:'🎡',n:'ferris_wheel',t:3},
+  {e:'🎢',n:'roller_coaster',t:3},{e:'🎪',n:'circus_tent',t:3},
+  {e:'🔭',n:'telescope',t:3},{e:'🧲',n:'magnet',t:3},{e:'⚗️',n:'alembic',t:3},
+  {e:'🧪',n:'test_tube',t:3},{e:'🎭',n:'performing_arts',t:3},
+  {e:'🖼️',n:'framed_picture',t:3},{e:'🎻',n:'violin',t:3},{e:'🎺',n:'trumpet',t:3},
+  {e:'🪗',n:'accordion',t:3},{e:'🥊',n:'boxing_glove',t:3},
+  {e:'🏹',n:'bow_and_arrow',t:3},{e:'🛹',n:'skateboard',t:3},
+  {e:'🤿',n:'diving_mask',t:3},{e:'🏄',n:'surfer',t:3},{e:'⛷️',n:'skier',t:3},
+  {e:'🧗',n:'person_climbing',t:3},{e:'🎲',n:'game_die',t:3},
+  {e:'♟️',n:'chess_pawn',t:3},{e:'🎰',n:'slot_machine',t:3},
+  {e:'🗺️',n:'world_map',t:3},{e:'🌛',n:'first_quarter_moon_face',t:3},
+  {e:'🌜',n:'last_quarter_moon_face',t:3},{e:'🌝',n:'full_moon_with_face',t:3},
+  {e:'☄️',n:'comet',t:3},
+
+  // ── T2 rzadkie ────────────────────────────────────
+  {e:'🎙',n:'studio_microphone',t:2},{e:'🫐',n:'blueberries',t:2},
+  {e:'🦆',n:'duck',t:2},{e:'🥞',n:'pancakes',t:2},{e:'🐿',n:'chipmunk',t:2},
+  {e:'🛵',n:'motor_scooter',t:2},{e:'🥝',n:'kiwi_fruit',t:2},
+  {e:'🪘',n:'long_drum',t:2},{e:'🪕',n:'banjo',t:2},{e:'🎷',n:'saxophone',t:2},
+  {e:'🛡️',n:'shield',t:2},{e:'⚔️',n:'crossed_swords',t:2},
+  {e:'🪃',n:'boomerang',t:2},{e:'🪁',n:'slingshot',t:2},
+  {e:'🎣',n:'fishing_pole_and_fish',t:2},{e:'🪂',n:'parachute',t:2},
+  {e:'🛷',n:'sled',t:2},{e:'🥌',n:'curling_stone',t:2},{e:'🛼',n:'roller_skate',t:2},
+  {e:'🏇',n:'horse_racing',t:2},{e:'🤺',n:'fencer',t:2},
+  {e:'🥋',n:'martial_arts_uniform',t:2},{e:'🏋️',n:'weight_lifter',t:2},
+  {e:'🤸',n:'cartwheel',t:2},{e:'🚵',n:'mountain_bicyclist',t:2},
+  {e:'🚣',n:'rowboat',t:2},{e:'🧘',n:'lotus_position',t:2},
+  {e:'🪬',n:'hamsa',t:2},{e:'🧿',n:'nazar_amulet',t:2},
+  {e:'🪩',n:'mirror_ball',t:2},{e:'🃏',n:'black_joker',t:2},
+  {e:'🀄',n:'mahjong',t:2},{e:'🧧',n:'red_envelope',t:2},
+  {e:'🎴',n:'flower_playing_cards',t:2},{e:'🔐',n:'closed_lock_with_key',t:2},
+  {e:'🗝️',n:'old_key',t:2},{e:'⚙️',n:'gear',t:2},{e:'🔩',n:'nut_and_bolt',t:2},
+  {e:'🧱',n:'bricks',t:2},{e:'🛋️',n:'couch_and_lamp',t:2},
+  {e:'🪥',n:'toothbrush',t:2},{e:'🧴',n:'lotion_bottle',t:2},
+  {e:'🪒',n:'razor',t:2},{e:'🧹',n:'broom',t:2},{e:'🪣',n:'bucket',t:2},
+  {e:'🧺',n:'basket',t:2},{e:'🧻',n:'roll_of_paper',t:2},
+  {e:'🪤',n:'mouse_trap',t:2},{e:'🪜',n:'ladder',t:2},{e:'🧰',n:'toolbox',t:2},
+  {e:'🪚',n:'carpentry_saw',t:2},{e:'⛏️',n:'pick',t:2},{e:'🗡️',n:'dagger',t:2},
+  {e:'🔱',n:'trident',t:2},{e:'⚜️',n:'fleur_de_lis',t:2},{e:'♾️',n:'infinity',t:2},
+  {e:'🧭',n:'compass',t:2},{e:'⏳',n:'hourglass_flowing_sand',t:2},
+  {e:'⌛',n:'hourglass',t:2},{e:'🕰️',n:'mantelpiece_clock',t:2},
+  {e:'🌡️',n:'thermometer',t:2},{e:'🌂',n:'closed_umbrella',t:2},
+  {e:'🌪️',n:'tornado',t:2},{e:'❄️',n:'snowflake',t:2},{e:'⚡',n:'zap',t:2},
+  {e:'💧',n:'droplet',t:2},{e:'🌬️',n:'wind_face',t:2},{e:'🌁',n:'foggy',t:2},
+  {e:'🌃',n:'night_with_stars',t:2},{e:'🌉',n:'bridge_at_night',t:2},
+  {e:'🌌',n:'milky_way',t:2},{e:'🌠',n:'stars',t:2},{e:'🌯',n:'burrito',t:2},
+  {e:'🍤',n:'fried_shrimp',t:2},{e:'🍧',n:'shaved_ice',t:2},
+  {e:'🥨',n:'pretzel',t:2},{e:'🌰',n:'chestnut',t:2},{e:'🥑',n:'avocado',t:2},
+  {e:'🫒',n:'olive',t:2},{e:'🥦',n:'broccoli',t:2},{e:'🥕',n:'carrot',t:2},
+  {e:'🧅',n:'onion',t:2},{e:'🧄',n:'garlic',t:2},{e:'🫚',n:'pouring_liquid',t:2},
+  {e:'🫛',n:'pea_pod',t:2},{e:'🌾',n:'ear_of_rice',t:2},
+  {e:'🏗️',n:'building_construction',t:2},{e:'🏭',n:'factory',t:2},
+  {e:'🚑',n:'ambulance',t:2},{e:'🚒',n:'fire_engine',t:2},
+  {e:'🚓',n:'police_car',t:2},{e:'🚜',n:'tractor',t:2},
+  {e:'🛤️',n:'railway_track',t:2},{e:'⛴️',n:'ferry',t:2},
+  {e:'🛳️',n:'passenger_ship',t:2},{e:'🚤',n:'speedboat',t:2},
+
+  // ── T1 niszowe ────────────────────────────────────
+  {e:'🦤',n:'dodo',t:1},{e:'🪶',n:'feather',t:1},{e:'🦣',n:'mammoth',t:1},
+  {e:'🫙',n:'jar',t:1},{e:'🛟',n:'ring_buoy',t:1},{e:'🫏',n:'donkey',t:1},
+  {e:'🧫',n:'petri_dish',t:1},{e:'🛺',n:'auto_rickshaw',t:1},
+  {e:'🦧',n:'orangutan',t:1},{e:'🦬',n:'bison',t:1},{e:'🪸',n:'coral',t:1},
+  {e:'🚠',n:'mountain_cableway',t:1},{e:'🚡',n:'monorail',t:1},
+  {e:'🚟',n:'suspension_railway',t:1},{e:'🚞',n:'mountain_railway',t:1},
+  {e:'🛥️',n:'motor_boat',t:1},{e:'⛽',n:'fuelpump',t:1},
+  {e:'🛻',n:'pickup_truck',t:1},{e:'🚐',n:'minibus',t:1},
+  {e:'🏚️',n:'derelict_house',t:1},{e:'🕌',n:'mosque',t:1},
+  {e:'⛪',n:'church',t:1},{e:'🕍',n:'synagogue',t:1},
+  {e:'⛩️',n:'shinto_shrine',t:1},{e:'🗾',n:'japan',t:1},
+  {e:'🌐',n:'globe_with_meridians',t:1},{e:'🗻',n:'mount_fuji',t:1},
+  {e:'🏝️',n:'desert_island',t:1},{e:'🏜️',n:'desert',t:1},
+  {e:'🏞️',n:'national_park',t:1},{e:'🌆',n:'city_sunrise',t:1},
+  {e:'🌇',n:'city_sunset',t:1},{e:'🎑',n:'rice_scene',t:1},
+  {e:'🎎',n:'dolls',t:1},{e:'🎏',n:'flags',t:1},{e:'🎐',n:'wind_chime',t:1},
+  {e:'🪔',n:'diya_lamp',t:1},{e:'🕯️',n:'candle',t:1},{e:'🔦',n:'flashlight',t:1},
+  {e:'🏮',n:'izakaya_lantern',t:1},{e:'🪑',n:'chair',t:1},{e:'🚪',n:'door',t:1},
+  {e:'🛏️',n:'bed',t:1},{e:'🛁',n:'bathtub',t:1},{e:'🪴',n:'potted_plant',t:1},
+  {e:'🧶',n:'yarn',t:1},{e:'🧵',n:'thread',t:1},{e:'🪡',n:'sewing_needle',t:1},
+  {e:'🧣',n:'scarf',t:1},{e:'🧤',n:'gloves',t:1},{e:'🧥',n:'coat',t:1},
+  {e:'🥼',n:'lab_coat',t:1},{e:'🩱',n:'one_piece_swimsuit',t:1},
+  {e:'🩲',n:'briefs',t:1},{e:'🩳',n:'shorts',t:1},{e:'👘',n:'kimono',t:1},
+  {e:'🥻',n:'sari',t:1},{e:'🩴',n:'thong_sandal',t:1},
+  {e:'🥾',n:'hiking_boot',t:1},{e:'👒',n:'womans_hat',t:1},
+  {e:'🎩',n:'tophat',t:1},{e:'🪖',n:'military_helmet',t:1},
+  {e:'💍',n:'ring',t:1},{e:'💄',n:'lipstick',t:1},{e:'👜',n:'handbag',t:1},
+  {e:'🧳',n:'luggage',t:1},{e:'📿',n:'prayer_beads',t:1},
+  {e:'🩺',n:'stethoscope',t:1},{e:'🩻',n:'x_ray',t:1},
+  {e:'🩹',n:'adhesive_bandage',t:1},{e:'💊',n:'pill',t:1},
+  {e:'🩸',n:'drop_of_blood',t:1},{e:'🧬',n:'dna',t:1},{e:'🦷',n:'tooth',t:1},
+  {e:'🦴',n:'bone',t:1},{e:'👁️',n:'eye',t:1},{e:'🫀',n:'anatomical_heart',t:1},
+  {e:'🫁',n:'lungs',t:1},{e:'🦠',n:'microbe',t:1},{e:'🧠',n:'brain',t:1},
+  {e:'🔋',n:'battery',t:1},{e:'🪫',n:'low_battery',t:1},
+  {e:'💾',n:'floppy_disk',t:1},{e:'💿',n:'cd',t:1},{e:'📼',n:'vhs',t:1},
+  {e:'📠',n:'fax',t:1},{e:'📺',n:'tv',t:1},{e:'📻',n:'radio',t:1},
+  {e:'⌨️',n:'keyboard',t:1},{e:'🖱️',n:'computer_mouse',t:1},
+  {e:'🖨️',n:'printer',t:1},{e:'🖲️',n:'trackball',t:1},
+  {e:'📡',n:'satellite',t:1},{e:'🔌',n:'electric_plug',t:1},
+  {e:'🧨',n:'firecracker',t:1},{e:'🪅',n:'pinata',t:1},
+  {e:'🎋',n:'tanabata_tree',t:1},{e:'🎍',n:'bamboo',t:1},
+  {e:'🏴',n:'black_flag',t:1},{e:'🚩',n:'triangular_flag',t:1},
+
+  // ── T0 nieznane (emoji 2021-2024 lub bez danych częstotliwości) ──────────
+  {e:'🪼',n:'jellyfish',t:0},{e:'🪷',n:'lotus',t:0},{e:'🪻',n:'hyacinth',t:0},
+  {e:'🫨',n:'shaking_face',t:0},{e:'🪭',n:'folding_hand_fan',t:0},
+  {e:'🧌',n:'troll',t:0},{e:'🫶',n:'heart_hands',t:0},
+  {e:'🩷',n:'pink_heart',t:0},{e:'🩶',n:'grey_heart',t:0},{e:'🩵',n:'light_blue_heart',t:0},
+  {e:'🫎',n:'moose',t:0},{e:'🪿',n:'goose',t:0},{e:'🐻‍❄️',n:'polar_bear',t:0},
+  {e:'🪱',n:'worm',t:0},{e:'🧊',n:'ice',t:0},{e:'🛖',n:'hut',t:0},{e:'🪝',n:'hook',t:0},
+  {e:'🦾',n:'mechanical_arm',t:0},{e:'🦿',n:'mechanical_leg',t:0},
+  {e:'🦻',n:'ear_with_hearing_aid',t:0},
+  {e:'🐕‍🦺',n:'service_dog',t:0},{e:'🐈‍⬛',n:'black_cat',t:0},
+  {e:'♻️',n:'recycle',t:0},{e:'🔰',n:'beginner',t:0},
+  {e:'☯️',n:'yin_yang',t:0},{e:'☮️',n:'peace_symbol',t:0},
+  {e:'✝️',n:'latin_cross',t:0},{e:'☪️',n:'star_and_crescent',t:0},
+  {e:'✡️',n:'star_of_david',t:0},{e:'🕉️',n:'om',t:0},
+  {e:'⛎',n:'ophiuchus',t:0},{e:'📛',n:'name_badge',t:0},
+  {e:'🎌',n:'crossed_flags',t:0},{e:'🏁',n:'checkered_flag',t:0},
+  {e:'♈',n:'aries',t:0},{e:'♉',n:'taurus',t:0},{e:'♊',n:'gemini',t:0},
+  {e:'♋',n:'cancer',t:0},{e:'♌',n:'leo',t:0},{e:'♍',n:'virgo',t:0},
+  {e:'♎',n:'libra',t:0},{e:'♏',n:'scorpius',t:0},{e:'♐',n:'sagittarius',t:0},
+  {e:'♑',n:'capricorn',t:0},{e:'♒',n:'aquarius',t:0},{e:'♓',n:'pisces',t:0},
+  {e:'🆒',n:'cool',t:0},{e:'🆕',n:'new',t:0},{e:'🆘',n:'sos',t:0},
+  {e:'🆚',n:'vs',t:0},{e:'🆔',n:'id',t:0},
+  {e:'🫸',n:'rightwards_pushing_hand',t:0},{e:'🫷',n:'leftwards_pushing_hand',t:0},
+
+  // ── T0 FLAGI KRAJÓW (A–M) ─────────────────────────
+  {e:'🇦🇨',n:'flag_ac',t:0},{e:'🇦🇩',n:'flag_ad',t:0},{e:'🇦🇪',n:'flag_ae',t:0},{e:'🇦🇫',n:'flag_af',t:0},
+  {e:'🇦🇬',n:'flag_ag',t:0},{e:'🇦🇮',n:'flag_ai',t:0},{e:'🇦🇱',n:'flag_al',t:0},{e:'🇦🇲',n:'flag_am',t:0},
+  {e:'🇦🇴',n:'flag_ao',t:0},{e:'🇦🇶',n:'flag_aq',t:0},{e:'🇦🇷',n:'flag_ar',t:0},{e:'🇦🇸',n:'flag_as',t:0},
+  {e:'🇦🇹',n:'flag_at',t:0},{e:'🇦🇺',n:'flag_au',t:0},{e:'🇦🇼',n:'flag_aw',t:0},{e:'🇦🇽',n:'flag_ax',t:0},
+  {e:'🇦🇿',n:'flag_az',t:0},{e:'🇧🇦',n:'flag_ba',t:0},{e:'🇧🇧',n:'flag_bb',t:0},{e:'🇧🇩',n:'flag_bd',t:0},
+  {e:'🇧🇪',n:'flag_be',t:0},{e:'🇧🇫',n:'flag_bf',t:0},{e:'🇧🇬',n:'flag_bg',t:0},{e:'🇧🇭',n:'flag_bh',t:0},
+  {e:'🇧🇮',n:'flag_bi',t:0},{e:'🇧🇯',n:'flag_bj',t:0},{e:'🇧🇱',n:'flag_bl',t:0},{e:'🇧🇲',n:'flag_bm',t:0},
+  {e:'🇧🇳',n:'flag_bn',t:0},{e:'🇧🇴',n:'flag_bo',t:0},{e:'🇧🇶',n:'flag_bq',t:0},{e:'🇧🇷',n:'flag_br',t:0},
+  {e:'🇧🇸',n:'flag_bs',t:0},{e:'🇧🇹',n:'flag_bt',t:0},{e:'🇧🇻',n:'flag_bv',t:0},{e:'🇧🇼',n:'flag_bw',t:0},
+  {e:'🇧🇾',n:'flag_by',t:0},{e:'🇧🇿',n:'flag_bz',t:0},{e:'🇨🇦',n:'flag_ca',t:0},{e:'🇨🇨',n:'flag_cc',t:0},
+  {e:'🇨🇩',n:'flag_cd',t:0},{e:'🇨🇫',n:'flag_cf',t:0},{e:'🇨🇬',n:'flag_cg',t:0},{e:'🇨🇭',n:'flag_ch',t:0},
+  {e:'🇨🇮',n:'flag_ci',t:0},{e:'🇨🇰',n:'flag_ck',t:0},{e:'🇨🇱',n:'flag_cl',t:0},{e:'🇨🇲',n:'flag_cm',t:0},
+  {e:'🇨🇳',n:'flag_cn',t:0},{e:'🇨🇴',n:'flag_co',t:0},{e:'🇨🇵',n:'flag_cp',t:0},{e:'🇨🇷',n:'flag_cr',t:0},
+  {e:'🇨🇺',n:'flag_cu',t:0},{e:'🇨🇻',n:'flag_cv',t:0},{e:'🇨🇼',n:'flag_cw',t:0},{e:'🇨🇽',n:'flag_cx',t:0},
+  {e:'🇨🇾',n:'flag_cy',t:0},{e:'🇨🇿',n:'flag_cz',t:0},{e:'🇩🇪',n:'flag_de',t:0},{e:'🇩🇬',n:'flag_dg',t:0},
+  {e:'🇩🇯',n:'flag_dj',t:0},{e:'🇩🇰',n:'flag_dk',t:0},{e:'🇩🇲',n:'flag_dm',t:0},{e:'🇩🇴',n:'flag_do',t:0},
+  {e:'🇩🇿',n:'flag_dz',t:0},{e:'🇪🇦',n:'flag_ea',t:0},{e:'🇪🇨',n:'flag_ec',t:0},{e:'🇪🇪',n:'flag_ee',t:0},
+  {e:'🇪🇬',n:'flag_eg',t:0},{e:'🇪🇭',n:'flag_eh',t:0},{e:'🇪🇷',n:'flag_er',t:0},{e:'🇪🇸',n:'flag_es',t:0},
+  {e:'🇪🇹',n:'flag_et',t:0},{e:'🇪🇺',n:'flag_eu',t:0},{e:'🇫🇮',n:'flag_fi',t:0},{e:'🇫🇯',n:'flag_fj',t:0},
+  {e:'🇫🇰',n:'flag_fk',t:0},{e:'🇫🇲',n:'flag_fm',t:0},{e:'🇫🇴',n:'flag_fo',t:0},{e:'🇫🇷',n:'flag_fr',t:0},
+  {e:'🇬🇦',n:'flag_ga',t:0},{e:'🇬🇧',n:'flag_gb',t:0},{e:'🇬🇩',n:'flag_gd',t:0},{e:'🇬🇪',n:'flag_ge',t:0},
+  {e:'🇬🇫',n:'flag_gf',t:0},{e:'🇬🇬',n:'flag_gg',t:0},{e:'🇬🇭',n:'flag_gh',t:0},{e:'🇬🇮',n:'flag_gi',t:0},
+  {e:'🇬🇱',n:'flag_gl',t:0},{e:'🇬🇲',n:'flag_gm',t:0},{e:'🇬🇳',n:'flag_gn',t:0},{e:'🇬🇵',n:'flag_gp',t:0},
+  {e:'🇬🇶',n:'flag_gq',t:0},{e:'🇬🇷',n:'flag_gr',t:0},{e:'🇬🇸',n:'flag_gs',t:0},{e:'🇬🇹',n:'flag_gt',t:0},
+  {e:'🇬🇺',n:'flag_gu',t:0},{e:'🇬🇼',n:'flag_gw',t:0},{e:'🇬🇾',n:'flag_gy',t:0},{e:'🇭🇰',n:'flag_hk',t:0},
+  {e:'🇭🇲',n:'flag_hm',t:0},{e:'🇭🇳',n:'flag_hn',t:0},{e:'🇭🇷',n:'flag_hr',t:0},{e:'🇭🇹',n:'flag_ht',t:0},
+  {e:'🇭🇺',n:'flag_hu',t:0},{e:'🇮🇨',n:'flag_ic',t:0},{e:'🇮🇩',n:'flag_id',t:0},{e:'🇮🇪',n:'flag_ie',t:0},
+  {e:'🇮🇱',n:'flag_il',t:0},{e:'🇮🇲',n:'flag_im',t:0},{e:'🇮🇳',n:'flag_in',t:0},{e:'🇮🇴',n:'flag_io',t:0},
+  {e:'🇮🇶',n:'flag_iq',t:0},{e:'🇮🇷',n:'flag_ir',t:0},{e:'🇮🇸',n:'flag_is',t:0},{e:'🇮🇹',n:'flag_it',t:0},
+  {e:'🇯🇪',n:'flag_je',t:0},{e:'🇯🇲',n:'flag_jm',t:0},{e:'🇯🇴',n:'flag_jo',t:0},{e:'🇯🇵',n:'flag_jp',t:0},
+  {e:'🇰🇪',n:'flag_ke',t:0},{e:'🇰🇬',n:'flag_kg',t:0},{e:'🇰🇭',n:'flag_kh',t:0},{e:'🇰🇮',n:'flag_ki',t:0},
+  {e:'🇰🇲',n:'flag_km',t:0},{e:'🇰🇳',n:'flag_kn',t:0},{e:'🇰🇵',n:'flag_kp',t:0},{e:'🇰🇷',n:'flag_kr',t:0},
+  {e:'🇰🇼',n:'flag_kw',t:0},{e:'🇰🇾',n:'flag_ky',t:0},{e:'🇰🇿',n:'flag_kz',t:0},{e:'🇱🇦',n:'flag_la',t:0},
+  {e:'🇱🇧',n:'flag_lb',t:0},{e:'🇱🇨',n:'flag_lc',t:0},{e:'🇱🇮',n:'flag_li',t:0},{e:'🇱🇰',n:'flag_lk',t:0},
+  {e:'🇱🇷',n:'flag_lr',t:0},{e:'🇱🇸',n:'flag_ls',t:0},{e:'🇱🇹',n:'flag_lt',t:0},{e:'🇱🇺',n:'flag_lu',t:0},
+  {e:'🇱🇻',n:'flag_lv',t:0},{e:'🇱🇾',n:'flag_ly',t:0},{e:'🇲🇦',n:'flag_ma',t:0},{e:'🇲🇨',n:'flag_mc',t:0},
+  {e:'🇲🇩',n:'flag_md',t:0},{e:'🇲🇪',n:'flag_me',t:0},{e:'🇲🇫',n:'flag_mf',t:0},{e:'🇲🇬',n:'flag_mg',t:0},
+  {e:'🇲🇭',n:'flag_mh',t:0},{e:'🇲🇰',n:'flag_mk',t:0},{e:'🇲🇱',n:'flag_ml',t:0},{e:'🇲🇲',n:'flag_mm',t:0},
+  {e:'🇲🇳',n:'flag_mn',t:0},{e:'🇲🇴',n:'flag_mo',t:0},{e:'🇲🇵',n:'flag_mp',t:0},{e:'🇲🇶',n:'flag_mq',t:0},
+  {e:'🇲🇷',n:'flag_mr',t:0},{e:'🇲🇸',n:'flag_ms',t:0},{e:'🇲🇹',n:'flag_mt',t:0},{e:'🇲🇺',n:'flag_mu',t:0},
+  {e:'🇲🇻',n:'flag_mv',t:0},{e:'🇲🇼',n:'flag_mw',t:0},{e:'🇲🇽',n:'flag_mx',t:0},{e:'🇲🇾',n:'flag_my',t:0},
+  {e:'🇲🇿',n:'flag_mz',t:0},
+
+  // ── T0 FLAGI KRAJÓW (N–Z) ─────────────────────────
+  {e:'🇳🇦',n:'flag_na',t:0},{e:'🇳🇨',n:'flag_nc',t:0},{e:'🇳🇪',n:'flag_ne',t:0},{e:'🇳🇫',n:'flag_nf',t:0},
+  {e:'🇳🇬',n:'flag_ng',t:0},{e:'🇳🇮',n:'flag_ni',t:0},{e:'🇳🇱',n:'flag_nl',t:0},{e:'🇳🇴',n:'flag_no',t:0},
+  {e:'🇳🇵',n:'flag_np',t:0},{e:'🇳🇷',n:'flag_nr',t:0},{e:'🇳🇺',n:'flag_nu',t:0},{e:'🇳🇿',n:'flag_nz',t:0},
+  {e:'🇴🇲',n:'flag_om',t:0},{e:'🇵🇦',n:'flag_pa',t:0},{e:'🇵🇪',n:'flag_pe',t:0},{e:'🇵🇫',n:'flag_pf',t:0},
+  {e:'🇵🇬',n:'flag_pg',t:0},{e:'🇵🇭',n:'flag_ph',t:0},{e:'🇵🇰',n:'flag_pk',t:0},{e:'🇵🇱',n:'flag_pl',t:0},
+  {e:'🇵🇲',n:'flag_pm',t:0},{e:'🇵🇳',n:'flag_pn',t:0},{e:'🇵🇷',n:'flag_pr',t:0},{e:'🇵🇸',n:'flag_ps',t:0},
+  {e:'🇵🇹',n:'flag_pt',t:0},{e:'🇵🇼',n:'flag_pw',t:0},{e:'🇵🇾',n:'flag_py',t:0},{e:'🇶🇦',n:'flag_qa',t:0},
+  {e:'🇷🇪',n:'flag_re',t:0},{e:'🇷🇴',n:'flag_ro',t:0},{e:'🇷🇸',n:'flag_rs',t:0},{e:'🇷🇺',n:'flag_ru',t:0},
+  {e:'🇷🇼',n:'flag_rw',t:0},{e:'🇸🇦',n:'flag_sa',t:0},{e:'🇸🇧',n:'flag_sb',t:0},{e:'🇸🇨',n:'flag_sc',t:0},
+  {e:'🇸🇩',n:'flag_sd',t:0},{e:'🇸🇪',n:'flag_se',t:0},{e:'🇸🇬',n:'flag_sg',t:0},{e:'🇸🇭',n:'flag_sh',t:0},
+  {e:'🇸🇮',n:'flag_si',t:0},{e:'🇸🇯',n:'flag_sj',t:0},{e:'🇸🇰',n:'flag_sk',t:0},{e:'🇸🇱',n:'flag_sl',t:0},
+  {e:'🇸🇲',n:'flag_sm',t:0},{e:'🇸🇳',n:'flag_sn',t:0},{e:'🇸🇴',n:'flag_so',t:0},{e:'🇸🇷',n:'flag_sr',t:0},
+  {e:'🇸🇸',n:'flag_ss',t:0},{e:'🇸🇹',n:'flag_st',t:0},{e:'🇸🇻',n:'flag_sv',t:0},{e:'🇸🇽',n:'flag_sx',t:0},
+  {e:'🇸🇾',n:'flag_sy',t:0},{e:'🇸🇿',n:'flag_sz',t:0},{e:'🇹🇦',n:'flag_ta',t:0},{e:'🇹🇨',n:'flag_tc',t:0},
+  {e:'🇹🇩',n:'flag_td',t:0},{e:'🇹🇫',n:'flag_tf',t:0},{e:'🇹🇬',n:'flag_tg',t:0},{e:'🇹🇭',n:'flag_th',t:0},
+  {e:'🇹🇯',n:'flag_tj',t:0},{e:'🇹🇰',n:'flag_tk',t:0},{e:'🇹🇱',n:'flag_tl',t:0},{e:'🇹🇲',n:'flag_tm',t:0},
+  {e:'🇹🇳',n:'flag_tn',t:0},{e:'🇹🇴',n:'flag_to',t:0},{e:'🇹🇷',n:'flag_tr',t:0},{e:'🇹🇹',n:'flag_tt',t:0},
+  {e:'🇹🇻',n:'flag_tv',t:0},{e:'🇹🇼',n:'flag_tw',t:0},{e:'🇹🇿',n:'flag_tz',t:0},{e:'🇺🇦',n:'flag_ua',t:0},
+  {e:'🇺🇬',n:'flag_ug',t:0},{e:'🇺🇲',n:'flag_um',t:0},{e:'🇺🇳',n:'flag_un',t:0},{e:'🇺🇸',n:'flag_us',t:0},
+  {e:'🇺🇾',n:'flag_uy',t:0},{e:'🇺🇿',n:'flag_uz',t:0},{e:'🇻🇦',n:'flag_va',t:0},{e:'🇻🇨',n:'flag_vc',t:0},
+  {e:'🇻🇪',n:'flag_ve',t:0},{e:'🇻🇬',n:'flag_vg',t:0},{e:'🇻🇮',n:'flag_vi',t:0},{e:'🇻🇳',n:'flag_vn',t:0},
+  {e:'🇻🇺',n:'flag_vu',t:0},{e:'🇼🇫',n:'flag_wf',t:0},{e:'🇼🇸',n:'flag_ws',t:0},{e:'🇽🇰',n:'flag_xk',t:0},
+  {e:'🇾🇪',n:'flag_ye',t:0},{e:'🇾🇹',n:'flag_yt',t:0},{e:'🇿🇦',n:'flag_za',t:0},{e:'🇿🇲',n:'flag_zm',t:0},
+  {e:'🇿🇼',n:'flag_zw',t:0},
+  // Flagi regionalne UK
+  {e:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',n:'england',t:0},{e:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',n:'scotland',t:0},{e:'🏴󠁧󠁢󠁷󠁬󠁳󠁿',n:'wales',t:0},
+
+  // ── T0 KLAWISZE NUMERYCZNE ────────────────────────
+  {e:'#️⃣',n:'hash',t:0},{e:'*️⃣',n:'asterisk',t:0},{e:'0️⃣',n:'zero',t:0},{e:'1️⃣',n:'one',t:0},
+  {e:'2️⃣',n:'two',t:0},{e:'3️⃣',n:'three',t:0},{e:'4️⃣',n:'four',t:0},{e:'5️⃣',n:'five',t:0},
+  {e:'6️⃣',n:'six',t:0},{e:'7️⃣',n:'seven',t:0},{e:'8️⃣',n:'eight',t:0},{e:'9️⃣',n:'nine',t:0},
+  {e:'🔟',n:'keycap_ten',t:0},
+
+  // ── T0 FAZY KSIĘŻYCA ──────────────────────────────
+  {e:'🌑',n:'new_moon',t:0},{e:'🌒',n:'waxing_crescent_moon',t:0},{e:'🌓',n:'first_quarter_moon',t:0},
+  {e:'🌔',n:'waxing_gibbous_moon',t:0},{e:'🌕',n:'full_moon',t:0},{e:'🌖',n:'waning_gibbous_moon',t:0},
+  {e:'🌗',n:'last_quarter_moon',t:0},{e:'🌘',n:'waning_crescent_moon',t:0},{e:'🌚',n:'new_moon_with_face',t:0},
+
+  // ── T0 POGODA ─────────────────────────────────────
+  {e:'☀️',n:'sunny',t:0},{e:'⛅',n:'partly_sunny',t:0},{e:'☁️',n:'cloud',t:0},
+  {e:'🌤️',n:'sun_behind_small_cloud',t:0},{e:'🌥️',n:'sun_behind_large_cloud',t:0},
+  {e:'🌦️',n:'sun_behind_rain_cloud',t:0},{e:'🌧️',n:'cloud_with_rain',t:0},
+  {e:'🌨️',n:'cloud_with_snow',t:0},{e:'⛈️',n:'cloud_with_lightning_and_rain',t:0},
+  {e:'🌩️',n:'cloud_with_lightning',t:0},{e:'🌫️',n:'fog',t:0},{e:'🌀️',n:'cyclone',t:0},
+  {e:'🌞',n:'sun_with_face',t:0},{e:'⛄',n:'snowman',t:0},{e:'☃️',n:'snowman_with_snow',t:0},
+  {e:'⛰️',n:'mountain',t:0},{e:'🌲',n:'evergreen_tree',t:0},{e:'🌳',n:'deciduous_tree',t:0},
+  {e:'🌱',n:'seedling',t:0},{e:'🌴',n:'palm_tree',t:0},{e:'☘️',n:'shamrock',t:0},
+  {e:'🪺',n:'nest_with_eggs',t:0},{e:'🪽',n:'wing',t:0},
+
+  // ── T0 KOLORY KART / SYMBOLE ─────────────────────
+  {e:'♠️',n:'spades',t:0},{e:'♥️',n:'hearts',t:0},{e:'♦️',n:'diamonds',t:0},{e:'♣️',n:'clubs',t:0},
+  {e:'🔁',n:'repeat',t:0},{e:'🔂',n:'repeat_one',t:0},{e:'🔀',n:'twisted_rightwards_arrows',t:0},
+  {e:'▶️',n:'arrow_forward',t:0},{e:'⏩',n:'fast_forward',t:0},{e:'⏭️',n:'next_track_button',t:0},
+  {e:'◀️',n:'arrow_backward',t:0},{e:'⏪',n:'rewind',t:0},{e:'⏮️',n:'previous_track_button',t:0},
+  {e:'⏫',n:'fast_up_button',t:0},{e:'⏬',n:'fast_down_button',t:0},{e:'⏸️',n:'pause_button',t:0},
+  {e:'⏹️',n:'stop_button',t:0},{e:'⏺️',n:'record_button',t:0},{e:'🎦',n:'cinema',t:0},
+  {e:'🔔',n:'bell',t:0},{e:'🔕',n:'no_bell',t:0},{e:'📢',n:'loudspeaker',t:0},{e:'📣',n:'mega',t:0},
+  {e:'🔇',n:'mute',t:0},{e:'🔈',n:'speaker',t:0},{e:'🔉',n:'sound',t:0},{e:'🔊',n:'loud_sound',t:0},
+  {e:'📶',n:'signal_strength',t:0},{e:'📳',n:'vibration_mode',t:0},{e:'📴',n:'mobile_phone_off',t:0},
+  {e:'📵',n:'no_mobile_phones',t:0},{e:'🔒',n:'lock',t:0},{e:'🔓',n:'unlock',t:0},{e:'🔑',n:'key',t:0},
+  {e:'🔨',n:'hammer',t:0},{e:'🔧',n:'wrench',t:0},{e:'⚖️',n:'scales',t:0},{e:'🔗',n:'link',t:0},
+  {e:'📝',n:'memo',t:0},{e:'✏️',n:'pencil',t:0},{e:'🖊️',n:'pen',t:0},{e:'🖋️',n:'fountain_pen',t:0},
+  {e:'📌',n:'pushpin',t:0},{e:'📍',n:'round_pushpin',t:0},{e:'📎',n:'paperclip',t:0},{e:'✂️',n:'scissors',t:0},
+  {e:'📏',n:'straight_ruler',t:0},{e:'📐',n:'triangular_ruler',t:0},{e:'🗑️',n:'wastebasket',t:0},
+
+  // ── T0 LUDZIE / POSTACIE ──────────────────────────
+  {e:'👶',n:'baby',t:0},{e:'🧒',n:'child',t:0},{e:'👦',n:'boy',t:0},{e:'👧',n:'girl',t:0},
+  {e:'🧑',n:'person',t:0},{e:'👨',n:'man',t:0},{e:'👩',n:'woman',t:0},{e:'🧓',n:'older_person',t:0},
+  {e:'👴',n:'older_man',t:0},{e:'👵',n:'older_woman',t:0},{e:'👮',n:'police_officer',t:0},
+  {e:'💂',n:'guard',t:0},{e:'🕵️',n:'detective',t:0},{e:'👷',n:'construction_worker',t:0},
+  {e:'🧙',n:'mage',t:0},{e:'🧝',n:'elf',t:0},{e:'🧛',n:'vampire',t:0},{e:'🧟',n:'zombie',t:0},
+  {e:'🧞',n:'genie',t:0},{e:'🧜',n:'merperson',t:0},{e:'🧚',n:'fairy',t:0},
+  {e:'🦸',n:'superhero',t:0},{e:'🦹',n:'supervillain',t:0},{e:'👼',n:'angel',t:0},
+  {e:'🎅',n:'santa',t:0},{e:'🤶',n:'mrs_claus',t:0},{e:'🤴',n:'prince',t:0},{e:'👸',n:'princess',t:0},
+  {e:'🫂',n:'people_hugging',t:0},{e:'💏',n:'couplekiss',t:0},{e:'💑',n:'couple_with_heart',t:0},
+  {e:'🧑‍⚕️',n:'health_worker',t:0},{e:'🧑‍🍳',n:'cook',t:0},{e:'🧑‍🎓',n:'student',t:0},
+  {e:'🧑‍🏫',n:'teacher',t:0},{e:'🧑‍💼',n:'office_worker',t:0},{e:'🧑‍🔬',n:'scientist',t:0},
+  {e:'🧑‍🎨',n:'artist',t:0},{e:'🧑‍✈️',n:'pilot',t:0},{e:'🧑‍🚀',n:'astronaut',t:0},
+  {e:'🧑‍🚒',n:'firefighter',t:0},{e:'🧑‍⚖️',n:'judge',t:0},{e:'🧑‍🌾',n:'farmer',t:0},
+  {e:'🧑‍🔧',n:'mechanic',t:0},{e:'🧑‍🏭',n:'factory_worker',t:0},{e:'🧑‍💻',n:'technologist',t:0},
+  {e:'🧑‍🎤',n:'singer',t:0},{e:'🧑‍🎸',n:'musician',t:0},{e:'🧑‍⚖️',n:'judge',t:0},
+
+  // ── T0 JEDZENIE / NAPOJE ──────────────────────────
+  {e:'🥩',n:'cut_of_meat',t:0},{e:'🥯',n:'bagel',t:0},{e:'🧆',n:'falafel',t:0},{e:'🫘',n:'beans',t:0},
+  {e:'🥫',n:'canned_food',t:0},{e:'🧉',n:'mate',t:0},{e:'🍵',n:'tea',t:0},{e:'🥤',n:'cup_with_straw',t:0},
+  {e:'🫗',n:'pouring_liquid',t:0},{e:'🍶',n:'sake',t:0},{e:'🍮',n:'custard',t:0},{e:'🧇',n:'waffle',t:0},
+  {e:'🥞',n:'pancakes',t:0},{e:'🍲',n:'stew',t:0},{e:'🥘',n:'shallow_pan_of_food',t:0},
+  {e:'🫔',n:'tamale',t:0},{e:'🥙',n:'stuffed_flatbread',t:0},{e:'🧈',n:'butter',t:0},
+  {e:'🥚',n:'egg',t:0},{e:'🫐',n:'blueberries',t:0},{e:'🍈',n:'melon',t:0},{e:'🍐',n:'pear',t:0},
+  {e:'🥝',n:'kiwi_fruit',t:0},{e:'🫒',n:'olive',t:0},{e:'🥬',n:'leafy_green',t:0},
+  {e:'🥒',n:'cucumber',t:0},{e:'🌽',n:'corn',t:0},{e:'🥑',n:'avocado',t:0},
+
+  // ── T0 SPORT I AKTYWNOŚĆ ──────────────────────────
+  {e:'⛳',n:'golf',t:0},{e:'🏌️',n:'golfing',t:0},{e:'🏊',n:'swimmer',t:0},{e:'🤽',n:'water_polo',t:0},
+  {e:'🚴',n:'bicyclist',t:0},{e:'🏂',n:'snowboarder',t:0},{e:'🤼',n:'wrestlers',t:0},
+  {e:'🏇',n:'horse_racing',t:0},{e:'🎿',n:'ski',t:0},{e:'🏒',n:'ice_hockey',t:0},
+  {e:'🏑',n:'field_hockey',t:0},{e:'🏏',n:'cricket_game',t:0},{e:'🏸',n:'badminton',t:0},
+  {e:'🥏',n:'flying_disc',t:0},{e:'🪃',n:'boomerang',t:0},{e:'🛼',n:'roller_skate',t:0},
+  {e:'🛷',n:'sled',t:0},{e:'🥌',n:'curling_stone',t:0},{e:'🥋',n:'martial_arts_uniform',t:0},
+  {e:'🤺',n:'fencer',t:0},{e:'🤸',n:'cartwheel',t:0},{e:'🧗',n:'person_climbing',t:0},
+  {e:'🚵',n:'mountain_bicyclist',t:0},{e:'🚣',n:'rowboat',t:0},
+
+  // ── T0 PRZEDMIOTY / DOM ───────────────────────────
+  {e:'🪟',n:'window',t:0},{e:'🪠',n:'plunger',t:0},{e:'🛗',n:'elevator',t:0},
+  {e:'🧯',n:'fire_extinguisher',t:0},{e:'🪜',n:'ladder',t:0},{e:'🚽',n:'toilet',t:0},
+  {e:'🚿',n:'shower',t:0},{e:'🧼',n:'soap',t:0},{e:'🧽',n:'sponge',t:0},{e:'🧺',n:'basket',t:0},
+  {e:'🧻',n:'roll_of_paper',t:0},{e:'🪤',n:'mouse_trap',t:0},{e:'🪚',n:'carpentry_saw',t:0},
+  {e:'🗜️',n:'clamp',t:0},{e:'⛓️',n:'chains',t:0},{e:'🔏',n:'lock_with_ink_pen',t:0},
+  {e:'🖥️',n:'desktop_computer',t:0},{e:'📟',n:'pager',t:0},{e:'☎️',n:'telephone',t:0},
+  {e:'📞',n:'telephone_receiver',t:0},{e:'📲',n:'mobile_phone_with_arrow',t:0},
+  {e:'🖊️',n:'ballpoint_pen',t:0},{e:'📓',n:'notebook',t:0},{e:'📔',n:'notebook_with_decorative_cover',t:0},
+  {e:'📒',n:'ledger',t:0},{e:'📕',n:'closed_book',t:0},{e:'📗',n:'green_book',t:0},
+  {e:'📘',n:'blue_book',t:0},{e:'📙',n:'orange_book',t:0},{e:'📜',n:'scroll',t:0},
+  {e:'🗞️',n:'newspaper_roll',t:0},{e:'🏷️',n:'label',t:0},{e:'🔖',n:'bookmark',t:0},
+  {e:'💰',n:'moneybag',t:0},{e:'💴',n:'yen',t:0},{e:'💵',n:'dollar',t:0},{e:'💶',n:'euro',t:0},
+  {e:'💷',n:'pound',t:0},{e:'💸',n:'money_with_wings',t:0},{e:'💹',n:'chart',t:0},
+  {e:'🏧',n:'atm',t:0},{e:'💳',n:'credit_card',t:0},{e:'🏦',n:'bank',t:0},
+  {e:'🏨',n:'hotel',t:0},{e:'🏩',n:'love_hotel',t:0},{e:'🏪',n:'convenience_store',t:0},
+  {e:'🏫',n:'school',t:0},{e:'🏬',n:'department_store',t:0},{e:'🏥',n:'hospital',t:0},
+  {e:'⛽',n:'fuelpump',t:0},{e:'🚦',n:'vertical_traffic_light',t:0},{e:'🚥',n:'traffic_light',t:0},
+  {e:'🛣️',n:'motorway',t:0},{e:'🚧',n:'construction',t:0},{e:'⚓',n:'anchor',t:0},
+
+  // ── T0 ZNAKI / LITERY / JAPOŃSKIE ────────────────
+  {e:'🅰️',n:'a',t:0},{e:'🅱️',n:'b',t:0},{e:'🆎',n:'ab',t:0},{e:'🆑',n:'cl',t:0},
+  {e:'🆖',n:'ng',t:0},{e:'🆗',n:'ok',t:0},{e:'🆙',n:'up',t:0},{e:'🆓',n:'free',t:0},
+  {e:'🆕',n:'new',t:0},{e:'🆒',n:'cool',t:0},{e:'🔄',n:'arrows_counterclockwise',t:0},
+  {e:'🉐',n:'ideograph_advantage',t:0},{e:'🉑',n:'accept',t:0},{e:'🈳',n:'u6307',t:0},
+  {e:'🈴',n:'u5408',t:0},{e:'🈵',n:'u6e80',t:0},{e:'🈹',n:'u5272',t:0},{e:'🈲',n:'u7981',t:0},
+  {e:'🈶',n:'u6709',t:0},{e:'🈚',n:'u7121',t:0},{e:'🈸',n:'u7533',t:0},{e:'🈷️',n:'u6708',t:0},
+  {e:'🈺',n:'u55b6',t:0},{e:'🈯',n:'u6307',t:0},
+
+  // ── T0 EMOJI 2022–2024 (nowe) ─────────────────────
+  {e:'🍋‍🟩',n:'lime',t:0},{e:'🍄‍🟫',n:'brown_mushroom',t:0},{e:'🪸',n:'coral',t:0},
+  {e:'🐦‍⬛',n:'black_bird',t:0},{e:'🫃',n:'pregnant_man',t:0},{e:'🫄',n:'pregnant_person',t:0},
+  {e:'🧑‍🦯',n:'person_with_probing_cane',t:0},{e:'🧑‍🦼',n:'person_in_motorized_wheelchair',t:0},
+  {e:'🧑‍🦽',n:'person_in_manual_wheelchair',t:0},{e:'🫦',n:'biting_lip',t:0},
+  {e:'🫧',n:'bubbles',t:0},{e:'🪬',n:'hamsa',t:0},{e:'🪩',n:'mirror_ball',t:0},
+  {e:'🪫',n:'low_battery',t:0},{e:'🩻',n:'x_ray',t:0},{e:'🩼',n:'crutch',t:0},
+  {e:'🪷',n:'lotus',t:0},{e:'🫙',n:'jar',t:0},{e:'🪣',n:'bucket',t:0},
+  {e:'🪆',n:'nesting_dolls',t:0},{e:'🪅',n:'pinata',t:0},{e:'🪄',n:'magic_wand',t:0},
+
+  // ── T0 GESTY DŁONI ────────────────────────────────
+  {e:'🫰',n:'hand_with_index_finger_and_thumb_crossed',t:0},{e:'🫱',n:'rightwards_hand',t:0},
+  {e:'🫲',n:'leftwards_hand',t:0},{e:'🫳',n:'palm_down_hand',t:0},{e:'🫴',n:'palm_up_hand',t:0},
+  {e:'🤌',n:'pinched_fingers',t:0},{e:'🤏',n:'pinching_hand',t:0},{e:'🖖',n:'vulcan_salute',t:0},
+  {e:'☝️',n:'point_up',t:0},{e:'🫵',n:'point_at_viewer',t:0},{e:'🦶',n:'foot',t:0},
+  {e:'🦵',n:'leg',t:0},{e:'💋',n:'kiss',t:0},{e:'👃',n:'nose',t:0},{e:'👂',n:'ear',t:0},
+
+  // ── T0 ZWIERZĘTA (brakujące) ──────────────────────
+  {e:'🐛',n:'bug',t:0},{e:'🐞',n:'ladybug',t:0},{e:'🕷️',n:'spider',t:0},{e:'🦂',n:'scorpion',t:0},
+  {e:'🦟',n:'mosquito',t:0},{e:'🪲',n:'beetle',t:0},{e:'🪳',n:'cockroach',t:0},{e:'🪰',n:'fly',t:0},
+  {e:'🪱',n:'worm',t:0},{e:'🦗',n:'cricket',t:0},{e:'🐿️',n:'chipmunk',t:0},{e:'🦆',n:'duck',t:0},
+  {e:'🦤',n:'dodo',t:0},{e:'🐕',n:'dog2',t:0},{e:'🐩',n:'poodle',t:0},{e:'🐈',n:'cat2',t:0},
+  {e:'🐇',n:'rabbit2',t:0},{e:'🐿️',n:'chipmunk',t:0},{e:'🦔',n:'hedgehog',t:0},
+  {e:'🐾',n:'feet',t:0},{e:'🐉',n:'dragon',t:0},{e:'🦕',n:'sauropod',t:0},{e:'🦖',n:'t_rex',t:0},
+  {e:'🌊',n:'ocean',t:0},{e:'🐠',n:'tropical_fish',t:0},{e:'🐟',n:'fish',t:0},{e:'🐡',n:'blowfish',t:0},
+  {e:'🦈',n:'shark',t:0},{e:'🐚',n:'shell',t:0},{e:'🪸',n:'coral',t:0},
+
+  // ── T0 PLANETY / PRZESTRZEŃ ───────────────────────
+  {e:'🪐',n:'ringed_planet',t:0},{e:'🌍',n:'earth_africa',t:0},{e:'🌎',n:'earth_americas',t:0},
+  {e:'🌏',n:'earth_asia',t:0},{e:'☄️',n:'comet',t:0},{e:'🔭',n:'telescope',t:0},
+  {e:'🛸',n:'flying_saucer',t:0},{e:'🚀',n:'rocket',t:0},
+];
+
+// Deduplicate POOL: keep first (= highest-tier) occurrence of each emoji
+;(function() {
+  const seen = new Set();
+  for (let i = POOL.length - 1; i >= 0; i--) {
+    if (seen.has(POOL[i].e)) POOL.splice(i, 1);
+    else seen.add(POOL[i].e);
+  }
+})();
+
+// ══════════════════════════════════════════════════════
+//  UTILITIES
+// ══════════════════════════════════════════════════════
+
+function fmtPts(n) {
+  return Number(n).toLocaleString('en-US').replace(/,/g, '');
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  document.getElementById(id)?.classList.remove('hidden');
+}
+
+// ── Seeded RNG (LCG) ──
+function seededRng(seed) {
+  let s = seed >>> 0;
+  return function() {
+    s = Math.imul(1664525, s) + 1013904223 >>> 0;
+    return s / 0x100000000;
+  };
+}
+function seededShuffle(arr, rng) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ── Daily Challenge helpers ──
+function todaySeed() {
+  const d = new Date();
+  return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+}
+function dailyKey()     { return `ttm_iq_daily_${todaySeed()}`; }
+function isDailyPlayed(){ try { return !!localStorage.getItem(dailyKey()); } catch(e) { return false; } }
+function markDailyPlayed(score) {
+  try { localStorage.setItem(dailyKey(), score); } catch(e) {}
+  updateDailyStreak();
+}
+function getDailyStreak() { try { return parseInt(localStorage.getItem('ttm_iq_dstreak') || '0'); } catch(e) { return 0; } }
+function updateDailyStreak() {
+  try {
+    const lastKey = 'ttm_iq_dlast';
+    const streakKey = 'ttm_iq_dstreak';
+    const today = todaySeed();
+    const last  = parseInt(localStorage.getItem(lastKey) || '0');
+    const prev  = new Date(); prev.setDate(prev.getDate() - 1);
+    const yest  = prev.getFullYear() * 10000 + (prev.getMonth()+1) * 100 + prev.getDate();
+    let streak  = parseInt(localStorage.getItem(streakKey) || '0');
+    if (last === yest) streak += 1;
+    else if (last !== today) streak = 1;
+    localStorage.setItem(streakKey, streak);
+    localStorage.setItem(lastKey, today);
+    return streak;
+  } catch(e) { return 1; }
+}
+function buildDailySequence() {
+  const rng = seededRng(todaySeed());
+  const pool = POOL.filter(p => p.t >= 1 && p.t <= 5);
+  return seededShuffle(pool, rng).slice(0, 15); // 3 rounds × 5 puzzles
+}
+
+// ── Mastery helpers ──
+function getMastery()   { try { return JSON.parse(localStorage.getItem('ttm_iq_mastery') || '{}'); } catch(e) { return {}; } }
+function saveMastery(m) { try { localStorage.setItem('ttm_iq_mastery', JSON.stringify(m)); } catch(e) {} }
+function updateMastery(emoji, wasCorrect) {
+  const m = getMastery();
+  if (!m[emoji]) m[emoji] = { seen: 0, wrong: 0 };
+  m[emoji].seen++;
+  if (!wasCorrect) m[emoji].wrong++;
+  saveMastery(m);
+}
+function masteryAccuracy(emoji) {
+  const d = getMastery()[emoji];
+  if (!d || d.seen === 0) return -1; // unseen
+  return 1 - d.wrong / d.seen;
+}
+function masteredCount() {
+  const m = getMastery();
+  return Object.values(m).filter(d => d.seen >= 3 && (1 - d.wrong / d.seen) >= 0.8).length;
+}
+function getWeightedCorrect(pool) {
+  const m = getMastery();
+  const weights = pool.map(p => {
+    const d = m[p.e];
+    if (!d || d.seen === 0) return 3;            // unseen — medium priority
+    const acc = 1 - d.wrong / d.seen;
+    if (acc >= 0.8 && d.seen >= 3) return 0.3;  // mastered — rarely shown
+    if (acc < 0.5)                 return 6;     // struggling — high priority
+    return 2;                                    // learning — normal
+  });
+  const total = weights.reduce((a, b) => a + b, 0);
+  let r = Math.random() * total;
+  for (let i = 0; i < pool.length; i++) {
+    r -= weights[i];
+    if (r <= 0) return pool[i];
+  }
+  return pool[pool.length - 1];
+}
+function buildSprintPool() {
+  const m = getMastery();
+  const all = POOL.filter(p => p.t >= 1);
+  const weak   = all.filter(p => { const d = m[p.e]; return d && d.seen > 0 && (1 - d.wrong/d.seen) < 0.8; });
+  const unseen = all.filter(p => !m[p.e] || m[p.e].seen === 0);
+  let result = [...weak, ...unseen];
+  if (result.length < 9) result = [...result, ...POOL.filter(p => p.t === 1)];
+  const seen = new Set();
+  return result.filter(p => seen.has(p.e) ? false : (seen.add(p.e), true));
+}
+
+// ── Mode select render ──
+const MODE_DEFS = [
+  { id:'classic', icon:'🎯', name:'CLASSIC',         desc:'Classic mode. Identify the emoji from its shortcode name. 5s timer, 3 lives.' },
+  { id:'daily',   icon:'📅', name:'DAILY CHALLENGE', desc:'15 daily puzzles, same for everyone. Play once a day.' },
+  { id:'mastery', icon:'🧠', name:'EMOJI MASTERY',   desc:'Learn systematically. Emoji you struggle with appear more often.' },
+  { id:'blind',   icon:'🙈', name:'BLIND',           desc:'Shortcode hidden — tap an emoji to reveal it. Guess blind.' },
+  { id:'notimer', icon:'♾️', name:'NO TIMER',        desc:'No timer, no stress — take your time. Flat points per correct answer.' },
+  { id:'rewers',  icon:'🔄', name:'REVERSE',         desc:'Reversed! See the emoji — pick the matching shortcode from 4 options.' },
+];
+function renderModeSelect() {
+  const dailyPlayed = isDailyPlayed();
+  const streak      = getDailyStreak();
+  const mastered    = masteredCount();
+  const total       = POOL.filter(p => p.t > 0).length;
+  const body = document.getElementById('ms-cards');
+  body.innerHTML = MODE_DEFS.map(m => {
+    let badge = '', extra = '', locked = false;
+    const best = parseInt(localStorage.getItem(`ttm_iq_best_${m.id}`) || '0');
+    if (m.id === 'daily') {
+      if (dailyPlayed) {
+        badge  = `<div class="mc-badge badge-done">DONE</div>`;
+        locked = true;
+      } else {
+        badge = `<div class="mc-badge badge-today">TODAY</div>`;
+      }
+      if (streak > 1) extra = `<div class="mc-streak">🔥 ${streak} day streak</div>`;
+      if (best > 0) extra += `<div class="mc-streak">★ best ${fmtPts(best)} pts</div>`;
+    } else if (m.id === 'mastery' || m.id === 'sprint') {
+      extra = `<div class="mc-streak">${mastered}/${total} mastered</div>`;
+      if (best > 0) extra += `<div class="mc-streak">★ best ${fmtPts(best)} pts</div>`;
+    } else if (m.id === 'rewers') {
+      if (best > 0) extra = `<div class="mc-streak">★ best ${fmtPts(best)} pts</div>`;
+      else badge = `<div class="mc-badge badge-new">NEW</div>`;
+    } else {
+      if (best > 0) extra = `<div class="mc-streak">★ best ${fmtPts(best)} pts</div>`;
+    }
+    return `<div class="mode-card${locked ? ' locked' : ''}" onclick="selectMode('${m.id}')">
+      <div class="mc-icon">${m.icon}</div>
+      <div class="mc-body">
+        <div class="mc-name">${m.name}</div>
+        <div class="mc-desc">${m.desc}</div>
+        ${extra}
+      </div>
+      ${badge}
+    </div>`;
+  }).join('');
+}
+
+function showGameOver(data) {
+  document.getElementById('go-score').textContent = fmtPts(data.score);
+  const nb = document.getElementById('go-new-best');
+  nb.style.display = data.isNewBest ? 'block' : 'none';
+
+  document.getElementById('go-s1').textContent = data.rounds;
+  document.getElementById('go-s2').textContent = data.correct;
+  document.getElementById('go-s3').textContent = data.streak;
+  const tierEl = document.getElementById('go-s4');
+  tierEl.textContent = TIER_META[data.hardestTier].label;
+  tierEl.style.color = TIER_META[data.hardestTier].color;
+
+  showScreen('gameover');
+}
+
+// ══════════════════════════════════════════════════════
+//  MODE — EMOJI IQ
+// ══════════════════════════════════════════════════════
+const TIMER_MS = 5000;
+const PUZZLES_PER_ROUND = 5;
+
+const TIER_META = {
+  5: { label:'POPULAR', cls:'tp5', color:'#FF6B6B' },
+  4: { label:'KNOWN',     cls:'tp4', color:'#FFD93D' },
+  3: { label:'COMMON',    cls:'tp3', color:'#6BCB77' },
+  2: { label:'RARE',   cls:'tp2', color:'#4D96FF' },
+  1: { label:'NICHE',   cls:'tp1', color:'#C77DFF' },
+  0: { label:'UNKNOWN',  cls:'tp0', color:'#B0BEC5' },
+};
+
+function gridSizeForRound(round) {
+  if (round === 1) return 2; if (round === 2) return 3; if (round === 3) return 4;
+  if (round <= 5) return 6;  if (round <= 7) return 8;  return 9;
+}
+function tierForRound(round) {
+  if (round <= 3) return 5; if (round <= 6) return 4; if (round <= 9) return 3;
+  if (round <= 12) return 2; return 1;
+}
+
+let G = {};
+let rafId = null;
+
+function resetState() {
+  G = {
+    mode: G.mode || 'classic',
+    round: 1, puzzle: 1, score: 0, lives: 3,
+    gridSize: gridSizeForRound(1),
+    correct: 0, streak: 0, bestStreak: 0,
+    hardestTier: 5, active: false, timerHandle: null, timerStart: 0,
+    correctIdx: -1, correctItem: null,
+    usedSets: { 1: new Set(), 2: new Set(), 3: new Set(), 4: new Set(), 5: new Set() },
+    // daily
+    dailySequence: null, dailyIdx: 0,
+    // sprint
+    sprintPool: null,
+  };
+}
+
+function getPoolForTier(tier) {
+  let pool = POOL.filter(p => p.t === tier);
+  if (pool.length < G.gridSize) {
+    const ext = POOL.filter(p => p.t > 0 && Math.abs(p.t - tier) <= 1);
+    const map = new Map();
+    for (const p of [...pool, ...ext]) map.set(p.e, p);
+    pool = [...map.values()];
+  }
+  return pool;
+}
+
+function IQ_cols(n) {
+  if (n <= 2) return 2; if (n === 3) return 3; if (n <= 4) return 2;
+  if (n <= 6) return 3; if (n <= 8) return 4;  if (n <= 9) return 3; return 4;
+}
+
+function fitEmojiName() {
+  const el = document.getElementById('emoji-name');
+  el.style.fontSize = ''; // reset do wartości CSS
+  const maxW = el.parentElement.clientWidth - 32;
+  if (el.scrollWidth <= maxW) return;
+  let size = parseFloat(getComputedStyle(el).fontSize);
+  const minSize = 16;
+  while (el.scrollWidth > maxW && size > minSize) {
+    size -= 1;
+    el.style.fontSize = size + 'px';
+  }
+}
+
+function renderName(shortcode, hidden) {
+  const el = document.getElementById('emoji-name');
+  el.style.opacity = '0';
+  setTimeout(() => {
+    if (hidden) {
+      const masked = shortcode.replace(/[^-_]/g, '*');
+      el.innerHTML = `<span class="colon">:</span><span class="word">${masked}</span><span class="colon">:</span>`;
+      el.classList.add('blind-hidden');
+    } else {
+      el.innerHTML = `<span class="colon">:</span><span class="word">${shortcode}</span><span class="colon">:</span>`;
+      el.classList.remove('blind-hidden');
+    }
+    fitEmojiName();
+    el.style.opacity = '1';
+  }, 80);
+}
+function revealBlindName() {
+  const el = document.getElementById('emoji-name');
+  el.classList.remove('blind-hidden');
+  el.innerHTML = `<span class="colon">:</span><span class="word">${G.correctItem.n}</span><span class="colon">:</span>`;
+}
+
+function applyTierStyle(tier) {
+  const { color, label } = TIER_META[tier];
+  const badge = document.getElementById('tier-badge');
+  if (badge) { badge.textContent = `T${tier}`; badge.style.color = color; badge.style.borderColor = color; }
+}
+
+function selectMode(mode) {
+  if (mode === 'daily' && isDailyPlayed()) return;
+  startMode(mode);
+}
+
+function startMode(mode) {
+  if (mode === 'daily' && isDailyPlayed()) { showScreen('intro'); renderModeSelect(); return; }
+  G.mode = mode;
+  resetState();
+  G.mode = mode;
+  cancelAnimationFrame(rafId);
+  clearTimeout(G.timerHandle);
+
+  // mode-specific init
+  if (mode === 'daily')   { G.dailySequence = buildDailySequence(); G.dailyIdx = 0; }
+  if (mode === 'notimer') { /* 3 lives, no timer */ }
+  if (mode === 'sprint')  { G.sprintPool = buildSprintPool(); G.lives = 1; }
+
+  // show/hide mode-specific UI
+  const isRev = mode === 'rewers';
+  document.querySelector('.name-area').style.display  = isRev ? 'none' : '';
+  document.querySelector('.grid-area').style.display  = isRev ? 'none' : '';
+  document.getElementById('rev-emoji-area').style.display = isRev ? 'block' : 'none';
+  document.getElementById('rev-choices').style.display    = isRev ? 'flex'  : 'none';
+  document.getElementById('timer-wrap').style.display = mode === 'notimer' ? 'none' : '';
+
+  // mastery row
+  const showMastery = (mode === 'mastery' || mode === 'sprint');
+  document.getElementById('mastery-row').style.display = showMastery ? 'block' : 'none';
+
+  // mode tag
+  const tagEl = document.getElementById('mode-tag');
+  const tagMap = { daily:'📅 DAILY', blind:'🙈 BLIND', notimer:'♾️ NO TIMER', sprint:'💪 SPRINT', rewers:'🔄 REVERSE', mastery:'🧠 MASTERY', classic:'' };
+  tagEl.textContent = tagMap[mode] || '';
+  tagEl.style.display = mode === 'classic' ? 'none' : 'inline-block';
+
+  showScreen('game-iq');
+  startRound('Let\'s go!');
+}
+
+// alias for gameover restart
+function startIQ() { startMode('classic'); }
+function restartCurrentMode() {
+  const m = G.mode || 'classic';
+  if (m === 'daily') { showScreen('intro'); renderModeSelect(); }
+  else startMode(m);
+}
+
+function buildPuzzle() {
+  const mode = G.mode || 'classic';
+  const tier = tierForRound(G.round);
+  let correct;
+
+  // ── Pick the correct answer ──
+  if (mode === 'daily') {
+    correct = G.dailySequence[G.dailyIdx++];
+  } else if (mode === 'sprint') {
+    const pool = G.sprintPool.length >= 1 ? G.sprintPool : POOL.filter(p => p.t >= 1);
+    const usedSet = G.usedSets[Math.min(tier, 5)] || new Set();
+    let avail = pool.filter(p => !usedSet.has(p.e));
+    if (avail.length === 0) { usedSet.clear(); avail = [...pool]; }
+    correct = avail[Math.floor(Math.random() * avail.length)];
+    usedSet.add(correct.e);
+  } else if (mode === 'mastery') {
+    const tierPool = getPoolForTier(tier);
+    correct = getWeightedCorrect(tierPool);
+  } else {
+    const tierPool = getPoolForTier(tier);
+    const usedSet  = G.usedSets[tier];
+    let avail = tierPool.filter(p => !usedSet.has(p.e));
+    if (avail.length === 0) { usedSet.clear(); avail = [...tierPool]; }
+    correct = avail[Math.floor(Math.random() * avail.length)];
+    usedSet.add(correct.e);
+  }
+
+  G.correctItem = correct;
+
+  // ── Build distractors ──
+  const distPool = mode === 'sprint'
+    ? POOL.filter(p => p.t >= 1 && p.e !== correct.e)
+    : getPoolForTier(tier).filter(p => p.e !== correct.e);
+
+  // T0 distractors: only use T0 entries (after dedup, these have t:0)
+  const t0Count       = G.gridSize >= 4 ? 2 : (G.gridSize >= 3 ? 1 : 0);
+  const t0Distractors = shuffle(POOL.filter(p => p.t === 0 && p.e !== correct.e)).slice(0, t0Count);
+  const regularCount  = G.gridSize - 1 - t0Count;
+  const distractors   = shuffle(distPool).slice(0, regularCount);
+  const items         = shuffle([correct, ...distractors, ...t0Distractors]);
+  G.correctIdx        = items.indexOf(correct);
+
+  // ── Update header UI ──
+  document.getElementById('score-display').textContent  = fmtPts(G.score);
+  const rd = document.getElementById('round-display'); if (rd) rd.textContent = G.round;
+  const pd = document.getElementById('puzzle-display'); if (pd) pd.textContent = `Q ${G.puzzle} / ${PUZZLES_PER_ROUND}`;
+  applyTierStyle(tier);
+  IQ_updateLives();
+  document.getElementById('pts-earned').textContent = '';
+
+  if (mode === 'mastery' || mode === 'sprint') {
+    const mc = masteredCount();
+    const tot = POOL.filter(p => p.t > 0).length;
+    document.getElementById('mastery-info').innerHTML = `<span>${mc}</span> / ${tot} mastered`;
+  }
+
+  // ── REVERSE MODE layout ──
+  if (mode === 'rewers') {
+    document.getElementById('rev-emoji-area').textContent = correct.e;
+    // 4 shortcode choices
+    const choices = shuffle([correct, ...shuffle(POOL.filter(p => p.e !== correct.e && p.t > 0)).slice(0, 3)]);
+    G.revChoiceIdx = choices.indexOf(correct); // index of correct among choices
+    const rc = document.getElementById('rev-choices');
+    rc.innerHTML = '';
+    choices.forEach((ch, idx) => {
+      const btn = document.createElement('div');
+      btn.className = 'rev-choice';
+      btn.setAttribute('role', 'button');
+      btn.setAttribute('tabindex', '0');
+      btn.setAttribute('aria-label', `:${ch.n}:`);
+      btn.innerHTML = `<span class="rc">:</span>${ch.n}<span class="rc">:</span>`;
+      btn.addEventListener('pointerdown', () => { handleRevTap(idx); });
+      btn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleRevTap(idx); } });
+      rc.appendChild(btn);
+    });
+    renderName('???');
+    G.active = true;
+    IQ_startTimer();
+    return;
+  }
+
+  // ── CLASSIC/DAILY/MASTERY/SPRINT/BLIND/NOTIMER grid layout ──
+  renderName(correct.n, mode === 'blind');
+
+  const c     = IQ_cols(G.gridSize);
+  const rows  = Math.ceil(G.gridSize / c);
+  const vw    = Math.min(window.innerWidth, 520);
+  const maxCs = Math.min(128, Math.floor((vw - 32 - (c - 1) * 8) / c));
+  // 3×3 grid only: scale down 30% to save vertical space
+  const scale = (rows === 3) ? 0.70 : 1.0;
+  const cs    = Math.max(48, Math.round(maxCs * scale));
+  const cfs   = Math.round(cs * 0.44);
+  const grid  = document.getElementById('emoji-grid');
+  grid.style.setProperty('--cs',  cs  + 'px');
+  grid.style.setProperty('--cfs', cfs + 'px');
+  grid.style.gridTemplateColumns = `repeat(${c}, ${cs}px)`;
+  grid.innerHTML = '';
+  items.forEach((item, idx) => {
+    const cell = document.createElement('div');
+    cell.className = 'emoji-cell';
+    cell.setAttribute('role', 'button');
+    cell.setAttribute('tabindex', '0');
+    cell.setAttribute('aria-label', `Wybierz ${item.e}`);
+    cell.textContent = item.e;
+    cell.addEventListener('pointerdown', () => { handleTap(idx); });
+    cell.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleTap(idx); } });
+    grid.appendChild(cell);
+  });
+
+  G.active = true;
+  if (mode === 'notimer') {
+    document.getElementById('mult-display').textContent = '—';
+  } else {
+    IQ_startTimer();
+  }
+}
+
+// ── Segmented pixel timer ──────────────────────────
+const TIMER_SEGS = 12;
+
+function renderTimerSegs(filledCount, warn) {
+  const wrap = document.getElementById('timer-wrap');
+  if (!wrap) return;
+  // Init segments on first call
+  if (wrap.children.length !== TIMER_SEGS) {
+    wrap.innerHTML = Array.from({length: TIMER_SEGS}, () => '<div class="timer-seg"></div>').join('');
+  }
+  const segs = wrap.children;
+  for (let i = 0; i < TIMER_SEGS; i++) {
+    if (i < filledCount) {
+      segs[i].className = warn ? 'timer-seg fill warn' : 'timer-seg fill';
+    } else {
+      segs[i].className = 'timer-seg';
+    }
+  }
+}
+
+function IQ_startTimer() {
+  renderTimerSegs(TIMER_SEGS, false);
+
+  G.timerStart  = performance.now();
+  G.timerHandle = setTimeout(IQ_onTimeout, TIMER_MS);
+
+  cancelAnimationFrame(rafId);
+  function tick() {
+    if (!G.active) return;
+    const elapsed = performance.now() - G.timerStart;
+    const rem = Math.max(0, (TIMER_MS - elapsed) / 1000);
+    const pct = rem / (TIMER_MS / 1000);
+    renderTimerSegs(Math.ceil(pct * TIMER_SEGS), pct < 0.25);
+    document.getElementById('mult-display').textContent = `×${rem.toFixed(1)}`;
+    rafId = requestAnimationFrame(tick);
+  }
+  rafId = requestAnimationFrame(tick);
+}
+
+function IQ_stopTimer() {
+  clearTimeout(G.timerHandle);
+  cancelAnimationFrame(rafId);
+  const elapsed = performance.now() - G.timerStart;
+  const remaining = Math.max(0, (TIMER_MS - elapsed) / 1000);
+  const pct = remaining / (TIMER_MS / 1000);
+  renderTimerSegs(Math.ceil(pct * TIMER_SEGS), pct < 0.25);
+  return remaining;
+}
+
+function handleTap(idx) {
+  if (!G.active) return;
+  const mode = G.mode || 'classic';
+
+  // Blind mode: reveal the name first, then process after a brief pause
+  if (mode === 'blind') {
+    revealBlindName();
+    G.active = false;
+    const remaining = IQ_stopTimer();
+    const cells = document.querySelectorAll('.emoji-cell');
+    cells.forEach(c => c.classList.add('disabled'));
+    setTimeout(() => _processTap(idx, remaining, mode), 280);
+    return;
+  }
+
+  G.active = false;
+  const remaining = mode === 'notimer' ? 0 : IQ_stopTimer();
+  const cells = document.querySelectorAll('.emoji-cell');
+  cells.forEach(c => c.classList.add('disabled'));
+  _processTap(idx, remaining, mode);
+}
+
+function _processTap(idx, remaining, mode) {
+  const cells = document.querySelectorAll('.emoji-cell');
+  const wasCorrect = idx === G.correctIdx;
+
+  // mastery tracking
+  if (mode === 'mastery' || mode === 'sprint') updateMastery(G.correctItem.e, wasCorrect);
+
+  if (wasCorrect) {
+    cells[idx].classList.add('correct');
+    G.correct++;
+    G.streak++;
+    if (G.streak > G.bestStreak) G.bestStreak = G.streak;
+    // scoring by mode
+    let pts;
+    if (mode === 'notimer') pts = G.round * 200;
+    else if (mode === 'blind') pts = Math.round(G.round * 200 * (remaining / (TIMER_MS / 1000)));
+    else pts = Math.round(G.round * 100 * remaining);
+    G.score += pts;
+    const sign = pts >= 0 ? '+' : '';
+    document.getElementById('mult-display').textContent = sign + fmtPts(pts);
+    const ptsEl = document.getElementById('pts-earned');
+    ptsEl.style.color = 'var(--correct)';
+    ptsEl.textContent = sign + fmtPts(pts);
+  } else {
+    cells[idx].classList.add('wrong');
+    cells[G.correctIdx].classList.add('reveal');
+    G.streak = 0;
+    G.lives--;
+    IQ_updateLives();
+    document.getElementById('mult-display').textContent = '✕';
+    const ptsEl = document.getElementById('pts-earned');
+    ptsEl.style.color = 'var(--wrong)';
+    ptsEl.textContent = '✕';
+    IQ_shake();
+  }
+  document.getElementById('score-display').textContent = G.score;
+  setTimeout(IQ_advance, 950);
+}
+
+function handleRevTap(idx) {
+  if (!G.active) return;
+  G.active = false;
+  const remaining = IQ_stopTimer();
+  const choices   = document.querySelectorAll('.rev-choice');
+  choices.forEach(c => c.classList.add('disabled'));
+  const wasCorrect = idx === G.revChoiceIdx;
+
+  if (G.mode === 'mastery' || G.mode === 'sprint') updateMastery(G.correctItem.e, wasCorrect);
+
+  if (wasCorrect) {
+    choices[idx].classList.remove('disabled');
+    choices[idx].classList.add('correct');
+    G.correct++;
+    G.streak++;
+    if (G.streak > G.bestStreak) G.bestStreak = G.streak;
+    const pts = Math.round(G.round * 100 * remaining);
+    G.score += pts;
+    document.getElementById('mult-display').textContent = '+' + fmtPts(pts);
+    const ptsEl = document.getElementById('pts-earned');
+    ptsEl.style.color = 'var(--correct)';
+    ptsEl.textContent = '+' + fmtPts(pts);
+  } else {
+    choices[idx].classList.remove('disabled');
+    choices[idx].classList.add('wrong');
+    choices[G.revChoiceIdx].classList.remove('disabled');
+    choices[G.revChoiceIdx].classList.add('reveal');
+    G.streak = 0;
+    G.lives--;
+    IQ_updateLives();
+    document.getElementById('mult-display').textContent = '✕';
+    const ptsEl = document.getElementById('pts-earned');
+    ptsEl.style.color = 'var(--wrong)';
+    ptsEl.textContent = '✕';
+    IQ_shake();
+  }
+  document.getElementById('score-display').textContent = G.score;
+  setTimeout(IQ_advance, 950);
+}
+
+function IQ_onTimeout() {
+  if (!G.active) return;
+  G.active = false;
+  cancelAnimationFrame(rafId);
+  const mode = G.mode || 'classic';
+
+  if (mode === 'mastery' || mode === 'sprint') updateMastery(G.correctItem.e, false);
+
+  if (mode === 'rewers') {
+    const choices = document.querySelectorAll('.rev-choice');
+    choices.forEach(c => c.classList.add('disabled'));
+    choices[G.revChoiceIdx]?.classList.add('reveal');
+  } else {
+    const cells = document.querySelectorAll('.emoji-cell');
+    cells.forEach(c => c.classList.add('disabled'));
+    cells[G.correctIdx]?.classList.add('reveal');
+    if (mode === 'blind') revealBlindName();
+  }
+
+  G.streak = 0;
+  G.lives--;
+  IQ_updateLives();
+  document.getElementById('mult-display').textContent = '⏱';
+  const ptsElT = document.getElementById('pts-earned');
+  ptsElT.style.color = 'var(--wrong)';
+  ptsElT.textContent = '⏱';
+  IQ_shake();
+  setTimeout(IQ_advance, 950);
+}
+
+function IQ_advance() {
+  if (G.lives <= 0) { IQ_gameOver(); return; }
+  const mode = G.mode || 'classic';
+  // daily ends after 15 puzzles (3 rounds × 5)
+  if (mode === 'daily' && G.dailyIdx >= 15) { IQ_gameOver(); return; }
+
+  if (G.puzzle >= PUZZLES_PER_ROUND) {
+    if (mode === 'daily' && G.round >= 3) { IQ_gameOver(); return; }
+    G.round++;
+    G.puzzle   = 1;
+    G.gridSize = gridSizeForRound(G.round);
+    startRound('Round complete');
+  } else {
+    G.puzzle++;
+    buildPuzzle();
+  }
+}
+
+function startRound(labelText) {
+  const mode = G.mode || 'classic';
+  const tier = (mode === 'sprint') ? 1 : tierForRound(G.round);
+  const meta = TIER_META[tier];
+  if (tier < G.hardestTier) G.hardestTier = tier;
+
+  document.getElementById('banner-label').textContent = labelText;
+  document.getElementById('banner-title').textContent = `ROUND ${G.round}`;
+  document.getElementById('banner-sub').textContent   = `${G.gridSize} emoji · base ${G.round * 100} pts`;
+  const tierEl = document.getElementById('banner-tier');
+  tierEl.textContent       = meta.label;
+  tierEl.style.color       = meta.color;
+  tierEl.style.borderColor = meta.color;
+
+  const b       = document.getElementById('banner');
+  const countEl = document.getElementById('banner-count');
+  b.classList.remove('hidden');
+
+  let n = 3;
+  function showCount() {
+    countEl.classList.remove('count-pop');
+    countEl.textContent = n;
+    void countEl.offsetWidth;
+    countEl.classList.add('count-pop');
+    if (n > 1) { n--; setTimeout(showCount, 850); }
+    else { setTimeout(() => { b.classList.add('hidden'); buildPuzzle(); }, 700); }
+  }
+  showCount();
+}
+
+function IQ_updateLives() {
+  const el = document.getElementById('lives-display');
+  let s = '';
+  for (let i = 0; i < 3; i++) {
+    s += i < G.lives
+      ? '<span style="color:#FF4081;text-shadow:0 0 8px rgba(255,64,129,.7);font-size:28px;line-height:1">♥</span>'
+      : '<span style="color:#2a2f4a;font-size:28px;line-height:1">♥</span>';
+  }
+  el.innerHTML = s;
+}
+
+function IQ_shake() {
+  const g = document.getElementById('game-iq');
+  g.classList.add('shake');
+  setTimeout(() => g.classList.remove('shake'), 350);
+}
+
+function IQ_gameOver() {
+  cancelAnimationFrame(rafId);
+  clearTimeout(G.timerHandle);
+  document.getElementById('banner').classList.add('hidden');
+  const mode = G.mode || 'classic';
+
+  let isNewBest = false;
+  const bestKey = `ttm_iq_best_${mode}`;
+  try {
+    const best = parseInt(localStorage.getItem(bestKey) || '0');
+    if (G.score > best) { localStorage.setItem(bestKey, G.score); isNewBest = true; }
+  } catch(e) {}
+
+  // daily: save score + update streak
+  if (mode === 'daily') markDailyPlayed(G.score);
+
+  // mode tag on game-over
+  const modeNames = { classic:'CLASSIC', daily:'DAILY', mastery:'MASTERY', blind:'BLIND', notimer:'NO TIMER', sprint:'SPRINT', rewers:'REVERSE' };
+  document.getElementById('go-mode-tag').textContent = modeNames[mode] || mode.toUpperCase();
+
+  // extra info line
+  let extra = '';
+  if (mode === 'daily') {
+    const streak = getDailyStreak();
+    extra = streak > 1 ? `🔥 ${streak} day streak` : '';
+  } else if (mode === 'mastery' || mode === 'sprint') {
+    const mc = masteredCount();
+    extra = `🧠 ${mc} / ${POOL.filter(p=>p.t>0).length} mastered`;
+  }
+  document.getElementById('go-extra').textContent = extra;
+
+  // restart button: daily → go to menu
+  const btn = document.getElementById('go-btn-restart');
+  if (mode === 'daily') {
+    btn.textContent = 'BACK TO MENU';
+  } else {
+    btn.textContent = 'PLAY AGAIN';
+  }
+
+  showGameOver({
+    score: G.score,
+    rounds: G.round,
+    correct: G.correct,
+    streak: G.bestStreak,
+    hardestTier: G.hardestTier,
+    isNewBest,
+  });
+}
+
+// ══════════════════════════════════════════════════════
+//  CHEAT HELPER (test)
+// ══════════════════════════════════════════════════════
+function cheatShow() {
+  const modal = document.getElementById('cheat-modal');
+  const content = document.getElementById('cheat-content');
+  const screen = document.querySelector('.screen:not(.hidden)');
+  const id = screen?.id;
+
+  if (id === 'game-iq' && G.correctItem) {
+    const isRev = G.mode === 'rewers';
+    content.innerHTML = `
+      <div style="font-size:48px;margin-bottom:8px">${G.correctItem.e}</div>
+      <div style="font-size:13px;font-family:'Courier New',monospace;color:var(--accent)">:${G.correctItem.n}:</div>
+      <div style="font-size:11px;color:#555;margin-top:6px">T${G.correctItem.t}${isRev ? ' · pick the correct shortcode' : ''}</div>`;
+  } else {
+    content.innerHTML = '<div style="color:#555;font-size:12px">No active game</div>';
+  }
+  modal.style.display = 'flex';
+}
+function cheatHide() {
+  document.getElementById('cheat-modal').style.display = 'none';
+}
+
+document.addEventListener('dblclick', e => e.preventDefault());
+renderModeSelect();
+</script>
+</body>
+</html>
