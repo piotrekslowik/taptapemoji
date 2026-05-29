@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tap Tap Emoji — Market Analysis 2025</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:     #0a0a0a;
+  --paper:   #f5f3ee;
+  --mid:     #e8e4dc;
+  --accent:  #FFD000;
+  --accent2: #ff3c3c;
+  --accent3: #0057ff;
+  --muted:   #6b6b6b;
+  --white:   #ffffff;
+  --dark:    #111111;
+  --f-head: 'Barlow Condensed', sans-serif;
+  --f-body: 'Barlow', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--f-body); background: var(--paper); color: var(--ink); font-size: 16px; line-height: 1.6; }
+.container { max-width: 900px; margin: 0 auto; padding: 0 32px; }
+.label { font-family: var(--f-head); font-weight: 700; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); }
+.note { font-size: 11px; color: var(--muted); font-style: italic; margin-top: 6px; }
+
+/* COVER */
+#cover { background: var(--dark); color: white; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; padding: 64px 64px 48px; position: relative; overflow: hidden; }
+#cover::before { content: ''; position: absolute; top: 0; right: 0; width: 50%; height: 100%; background: var(--accent); clip-path: polygon(20% 0, 100% 0, 100% 100%, 0% 100%); opacity: 0.06; }
+.cover-super { font-family: var(--f-head); font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+.cover-title { font-family: var(--f-head); font-size: clamp(56px, 9vw, 108px); font-weight: 900; line-height: 0.9; text-transform: uppercase; margin-top: 24px; letter-spacing: -2px; }
+.cover-title span { color: var(--accent); }
+.cover-sub { font-family: var(--f-head); font-size: 20px; font-weight: 400; color: rgba(255,255,255,0.45); margin-top: 20px; letter-spacing: 2px; text-transform: uppercase; }
+.cover-emoji-row { font-size: 44px; letter-spacing: 14px; margin-top: 48px; }
+.cover-footer { display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 24px; gap: 20px; flex-wrap: wrap; }
+.cover-meta-label { font-family: var(--f-head); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.3); font-weight: 700; }
+.cover-meta-value { font-family: var(--f-head); font-size: 16px; font-weight: 600; color: rgba(255,255,255,0.75); margin-top: 4px; }
+
+/* NAV */
+nav { position: sticky; top: 0; background: var(--ink); z-index: 100; border-bottom: 3px solid var(--accent); }
+nav .inner { max-width: 900px; margin: 0 auto; padding: 0 32px; display: flex; height: 46px; align-items: center; overflow-x: auto; }
+nav a { font-family: var(--f-head); font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.45); text-decoration: none; padding: 0 14px; height: 100%; display: flex; align-items: center; border-right: 1px solid rgba(255,255,255,0.07); white-space: nowrap; transition: color .15s; }
+nav a:hover { color: var(--accent); }
+
+/* SECTIONS */
+section { padding: 80px 0; border-bottom: 1px solid var(--mid); }
+.section-header { display: flex; align-items: flex-start; gap: 24px; margin-bottom: 48px; }
+.section-num { font-family: var(--f-head); font-size: 80px; font-weight: 900; line-height: 1; color: var(--mid); flex-shrink: 0; margin-top: -8px; }
+.section-title { font-family: var(--f-head); font-size: 42px; font-weight: 900; text-transform: uppercase; line-height: 1; letter-spacing: -0.5px; }
+.section-desc { font-size: 15px; color: var(--muted); margin-top: 8px; max-width: 540px; line-height: 1.55; }
+
+/* EXEC SUMMARY */
+.exec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-bottom: 40px; }
+.exec-card { background: var(--white); padding: 28px; border-left: 4px solid var(--accent); }
+.exec-card-label { font-family: var(--f-head); font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); }
+.exec-card-value { font-family: var(--f-head); font-size: 34px; font-weight: 900; line-height: 1.1; margin-top: 6px; }
+.exec-card-sub { font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
+
+.key-findings { background: var(--ink); color: white; padding: 40px; }
+.key-findings-title { font-family: var(--f-head); font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; }
+.findings-list { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; list-style: none; }
+.findings-list li { font-size: 14px; line-height: 1.5; padding-left: 20px; position: relative; color: rgba(255,255,255,0.8); }
+.findings-list li::before { content: "\2192"; position: absolute; left: 0; color: var(--accent); font-family: var(--f-head); font-weight: 700; }
+
+/* MARKET NUMBERS */
+.market-numbers { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; margin-bottom: 40px; }
+.mnum { background: var(--white); padding: 24px 20px; border-top: 3px solid var(--ink); }
+.mnum-value { font-family: var(--f-head); font-size: 38px; font-weight: 900; line-height: 1; }
+.mnum-label { font-family: var(--f-head); font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+.mnum-note { font-size: 11px; color: var(--muted); margin-top: 4px; font-style: italic; }
+
+/* PSYCHO BLOCK */
+.psycho-block { background: var(--white); padding: 32px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 28px; margin-top: 32px; }
+.psycho-label { font-family: var(--f-head); font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--accent2); margin-bottom: 8px; }
+.psycho-title { font-family: var(--f-head); font-size: 20px; font-weight: 700; line-height: 1.2; margin-bottom: 8px; }
+.psycho-body { font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+/* AUDIENCE */
+.audience-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+.audience-card { border: 2px solid var(--ink); padding: 32px; position: relative; }
+.audience-tag { position: absolute; top: -14px; left: 24px; background: var(--ink); color: white; font-family: var(--f-head); font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 4px 12px; }
+.audience-gen { font-family: var(--f-head); font-size: 52px; font-weight: 900; line-height: 1; margin-top: 8px; }
+.audience-years { font-family: var(--f-head); font-size: 13px; font-weight: 600; color: var(--muted); letter-spacing: 1px; margin-top: 4px; margin-bottom: 16px; }
+.audience-traits { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+.audience-traits li { font-size: 13px; line-height: 1.45; display: flex; gap: 10px; }
+.audience-fit { display: inline-block; margin-top: 20px; background: var(--accent); color: var(--ink); font-family: var(--f-head); font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 5px 12px; }
+
+/* MECHANIC OVERVIEW */
+.mechanic-overview { background: var(--ink); color: white; padding: 40px; margin-bottom: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+.mflow-title-top { font-family: var(--f-head); font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 28px; }
+.mflow-step { display: flex; gap: 16px; align-items: flex-start; position: relative; }
+.mflow-step:not(:last-child)::after { content: ''; position: absolute; left: 17px; top: 36px; width: 2px; height: calc(100% - 8px); background: rgba(255,208,0,0.2); }
+.mflow-num { width: 36px; height: 36px; background: var(--accent); color: var(--ink); font-family: var(--f-head); font-size: 18px; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.mflow-content { padding: 4px 0 28px; }
+.mflow-step-title { font-family: var(--f-head); font-size: 15px; font-weight: 700; text-transform: uppercase; color: var(--accent); }
+.mflow-desc { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 4px; line-height: 1.45; }
+.mechanic-stats { display: flex; flex-direction: column; gap: 20px; }
+.mstat { border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 16px; }
+.mstat-label { font-family: var(--f-head); font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 4px; }
+.mstat-value { font-family: var(--f-head); font-size: 28px; font-weight: 900; color: var(--accent); }
+.mstat-sub { font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 2px; }
+
+/* SCORING FORMULA */
+.scoring-formula { background: var(--white); border-left: 4px solid var(--accent); padding: 24px 28px; margin-bottom: 32px; }
+.sf-label { font-family: var(--f-head); font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+.sf-formula { font-family: var(--f-head); font-size: 26px; font-weight: 700; line-height: 1.3; }
+.sf-formula em { color: var(--accent2); font-style: normal; }
+.sf-note { font-size: 13px; color: var(--muted); margin-top: 10px; line-height: 1.55; }
+
+/* TIERS TABLE */
+.tier-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+.tier-table th { font-family: var(--f-head); font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; text-align: left; padding: 11px 14px; background: var(--ink); color: rgba(255,255,255,0.55); }
+.tier-table td { padding: 11px 14px; border-bottom: 1px solid var(--mid); font-size: 13px; vertical-align: middle; background: var(--white); }
+.tier-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 7px; vertical-align: middle; }
+
+/* MODES GRID */
+.modes-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; }
+.mode-block { background: var(--white); padding: 20px; border-top: 3px solid var(--mid); }
+.mode-block.primary { border-top-color: var(--accent); }
+.mode-icon { font-size: 24px; margin-bottom: 8px; }
+.mode-name { font-family: var(--f-head); font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.mode-desc { font-size: 12px; color: var(--muted); line-height: 1.45; }
+.mode-tag { display: inline-block; margin-top: 10px; font-family: var(--f-head); font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 3px 8px; border: 1px solid; }
+.tag-core  { color: var(--accent2); border-color: var(--accent2); }
+.tag-daily { color: var(--accent3); border-color: var(--accent3); }
+.tag-skill { color: #00aa55; border-color: #00aa55; }
+
+/* COMP TABLE */
+.comp-table-wrap { overflow-x: auto; margin-bottom: 32px; }
+.comp-table { width: 100%; border-collapse: collapse; min-width: 680px; }
+.comp-table th { font-family: var(--f-head); font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; text-align: left; padding: 11px 12px; background: var(--ink); color: rgba(255,255,255,0.55); white-space: nowrap; }
+.comp-table td { padding: 10px 12px; border-bottom: 1px solid var(--mid); font-size: 13px; background: var(--white); vertical-align: middle; }
+.comp-table tr.hl td { background: #fffbe6; }
+.comp-name { font-weight: 600; }
+.chip { display: inline-block; font-family: var(--f-head); font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 2px 7px; }
+.chip-yes  { background: #d4f7e3; color: #005c22; }
+.chip-no   { background: #fde8e8; color: #a80000; }
+.chip-part { background: #fff3cd; color: #7a4f00; }
+
+/* POSITIONING MAP */
+.pm-box { background: var(--white); padding: 32px; margin-top: 32px; }
+.pm-title { font-family: var(--f-head); font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; }
+
+/* DISTRIBUTION */
+.dist-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; margin-bottom: 32px; }
+.dist-card { background: var(--white); padding: 24px; }
+.dist-icon { font-size: 26px; margin-bottom: 10px; }
+.dist-title { font-family: var(--f-head); font-size: 15px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
+.dist-body { font-size: 13px; color: var(--muted); line-height: 1.5; }
+.dist-potential { display: flex; align-items: center; gap: 8px; margin-top: 14px; }
+.dp-label { font-family: var(--f-head); font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+.dots { display: flex; gap: 3px; }
+.dot-f { width: 9px; height: 9px; background: var(--ink); border-radius: 50%; }
+.dot-e { width: 9px; height: 9px; background: var(--mid); border-radius: 50%; }
+
+/* MONO GRID */
+.mono-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-bottom: 32px; }
+.mono-card { background: var(--white); padding: 28px; border-top: 3px solid var(--mid); }
+.mono-card.ph1a { border-top-color: var(--accent); }
+.mono-card.ph1b { border-top-color: var(--accent3); }
+.mono-phase { font-family: var(--f-head); font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.mono-title { font-family: var(--f-head); font-size: 20px; font-weight: 700; text-transform: uppercase; line-height: 1.1; margin-bottom: 12px; }
+.mono-body { font-size: 13px; line-height: 1.6; color: var(--ink); }
+.mono-complexity { margin-top: 16px; font-family: var(--f-head); font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+
+/* OPP / RISKS */
+.opp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 40px; }
+.opp-col-title { font-family: var(--f-head); font-size: 20px; font-weight: 900; text-transform: uppercase; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 3px solid var(--ink); }
+.opp-col-title.green { border-bottom-color: #00aa55; color: #005c22; }
+.opp-col-title.red   { border-bottom-color: var(--accent2); color: var(--accent2); }
+.opp-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.opp-item { background: var(--white); padding: 15px 18px; border-left: 3px solid; font-size: 13px; line-height: 1.5; }
+.opp-item.h  { border-color: #00aa55; }
+.opp-item.m  { border-color: var(--accent); }
+.opp-item.lo { border-color: var(--muted); }
+.opp-item.rh { border-color: var(--accent2); }
+.opp-item.rm { border-color: #ff8800; }
+.opp-item strong { display: block; font-family: var(--f-head); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+
+/* RECS */
+.rec-list { display: flex; flex-direction: column; gap: 2px; margin-bottom: 40px; }
+.rec-item { background: var(--white); display: grid; grid-template-columns: 60px 1fr auto; align-items: center; overflow: hidden; }
+.rec-num { background: var(--ink); color: var(--accent); font-family: var(--f-head); font-size: 30px; font-weight: 900; height: 80px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.rec-content { padding: 18px 22px; }
+.rec-title { font-family: var(--f-head); font-size: 17px; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+.rec-desc { font-size: 13px; color: var(--muted); line-height: 1.45; }
+.rec-effort { padding: 0 20px; font-family: var(--f-head); font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); white-space: nowrap; text-align: right; line-height: 1.6; }
+
+/* FOOTER */
+footer { background: var(--ink); color: rgba(255,255,255,0.35); padding: 28px 32px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+footer span { color: var(--accent); }
+
+/* RESPONSIVE */
+@media (max-width:720px) {
+  #cover { padding: 40px 24px 32px; }
+  .cover-title { font-size: 52px; }
+  .container { padding: 0 20px; }
+  section { padding: 56px 0; }
+  .exec-grid, .audience-grid, .opp-grid, .mono-grid, .psycho-block { grid-template-columns: 1fr; }
+  .market-numbers { grid-template-columns: 1fr 1fr; }
+  .modes-grid, .dist-grid { grid-template-columns: 1fr 1fr; }
+  .mechanic-overview { grid-template-columns: 1fr; }
+  .findings-list { grid-template-columns: 1fr; }
+  .rec-item { grid-template-columns: 48px 1fr; }
+  .rec-effort { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div id="cover">
+  <div>
+    <div class="cover-super">Market Analysis Report &middot; 2025</div>
+    <div class="cover-title">TAP TAP<br><span>EMOJI</span></div>
+    <div class="cover-sub">Browser Game &middot; Gen Z &amp; Alpha Audience</div>
+    <div class="cover-emoji-row">&#127919; &#128293; &#128142; &#129504;</div>
+  </div>
+  <div class="cover-footer">
+    <div><div class="cover-meta-label">Product</div><div class="cover-meta-value">Tap Tap Emoji</div></div>
+    <div><div class="cover-meta-label">Version</div><div class="cover-meta-value">v0.4 &mdash; Classic + 5 modes</div></div>
+    <div><div class="cover-meta-label">Primary Target</div><div class="cover-meta-value">Gen Z &amp; Alpha</div></div>
+    <div><div class="cover-meta-label">Date</div><div class="cover-meta-value">May 2025</div></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="inner">
+    <a href="#summary">Summary</a>
+    <a href="#market">Market</a>
+    <a href="#audience">Audience</a>
+    <a href="#mechanics">Mechanics</a>
+    <a href="#competitive">Competition</a>
+    <a href="#distribution">Distribution</a>
+    <a href="#monetization">Monetization</a>
+    <a href="#opportunities">Opportunities</a>
+  </div>
+</nav>
+
+<!-- 01 EXECUTIVE SUMMARY -->
+<section id="summary">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-num">01</div>
+      <div>
+        <div class="section-title">Executive Summary</div>
+        <div class="section-desc">A snapshot of market position, product strength, and the core opportunity Tap Tap Emoji is positioned to capture.</div>
+      </div>
+    </div>
+    <div class="exec-grid">
+      <div class="exec-card">
+        <div class="exec-card-label">Market Fit</div>
+        <div class="exec-card-value">Strong</div>
+        <div class="exec-card-sub">Directly aligned with Gen Z emoji literacy and mobile-first behavior</div>
+      </div>
+      <div class="exec-card">
+        <div class="exec-card-label">Primary Format</div>
+        <div class="exec-card-value">Browser game</div>
+        <div class="exec-card-sub">Zero install friction &mdash; play immediately, share instantly</div>
+      </div>
+      <div class="exec-card">
+        <div class="exec-card-label">Core Differentiator</div>
+        <div class="exec-card-value">Speed &times; multiplier</div>
+        <div class="exec-card-sub">Scoring tied to reaction time creates competitive tension unique in this category</div>
+      </div>
+      <div class="exec-card">
+        <div class="exec-card-label">Emoji Pool</div>
+        <div class="exec-card-value">700+ emoji</div>
+        <div class="exec-card-sub">Tiered T0&ndash;T5, from viral hits to obscure flags and symbols</div>
+      </div>
+    </div>
+    <div class="key-findings">
+      <div class="key-findings-title">Key Findings</div>
+      <ul class="findings-list">
+        <li>Emoji is the native language of Gen Z &amp; Alpha &mdash; product rides a cultural behavior, not teaches a new one</li>
+        <li>Classic mode&rsquo;s 5-second timer creates a unique adrenaline loop absent in direct competitors</li>
+        <li>Zero friction (browser, no account, no download) is a critical acquisition advantage</li>
+        <li>6 modes provide retention depth far beyond typical hyper-casual games</li>
+        <li>Daily Challenge creates a natural habit loop and return-visit mechanic</li>
+        <li>Shareable score cards are not yet implemented &mdash; biggest near-term growth lever</li>
+        <li>No monetization layer currently &mdash; product is pre-revenue, ready for ad / IAP integration</li>
+        <li>Competitive moat is thin; differentiation through depth (tiers, modes, community) is correct strategy</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 02 MARKET OVERVIEW -->
+<section id="market">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-num">02</div>
+      <div>
+        <div class="section-title">Market Overview</div>
+        <div class="section-desc">The casual and browser gaming landscape in 2025 &mdash; where Tap Tap Emoji fits and what trends favor it.</div>
+      </div>
+    </div>
+    <div class="market-numbers">
+      <div class="mnum">
+        <div class="mnum-value">~$90B</div>
+        <div class="mnum-label">Mobile gaming market</div>
+        <div class="mnum-note">Global 2024 est. (Newzoo)</div>
+      </div>
+      <div class="mnum">
+        <div class="mnum-value">~55%</div>
+        <div class="mnum-label">Casual share of downloads</div>
+        <div class="mnum-note">Largest segment by install volume</div>
+      </div>
+      <div class="mnum">
+        <div class="mnum-value">6B+</div>
+        <div class="mnum-label">Emojis sent daily</div>
+        <div class="mnum-note">Cross-platform estimate</div>
+      </div>
+      <div class="mnum">
+        <div class="mnum-value">92%</div>
+        <div class="mnum-label">Online adults use emoji</div>
+        <div class="mnum-note">Adobe Emoji Trend Report, est.</div>
+      </div>
+    </div>
+    <div style="background:var(--white);padding:32px;margin-bottom:32px;">
+      <div class="label" style="margin-bottom:20px;">Opportunity Assessment &mdash; Key Dimensions</div>
+      <div style="overflow-x:auto;">
+        <svg viewBox="0 0 780 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:'Barlow Condensed',sans-serif">
+          <line x1="50" y1="20" x2="50" y2="205" stroke="#0a0a0a" stroke-width="2"/>
+          <line x1="50" y1="205" x2="770" y2="205" stroke="#0a0a0a" stroke-width="2"/>
+          <text x="44" y="210" text-anchor="end" font-size="10" fill="#999">0</text>
+          <text x="44" y="167" text-anchor="end" font-size="10" fill="#999">25%</text>
+          <text x="44" y="124" text-anchor="end" font-size="10" fill="#999">50%</text>
+          <text x="44" y="81" text-anchor="end" font-size="10" fill="#999">75%</text>
+          <text x="44" y="30" text-anchor="end" font-size="10" fill="#999">100%</text>
+          <line x1="50" y1="30"  x2="770" y2="30"  stroke="#e8e4dc" stroke-width="1"/>
+          <line x1="50" y1="81"  x2="770" y2="81"  stroke="#e8e4dc" stroke-width="1"/>
+          <line x1="50" y1="124" x2="770" y2="124" stroke="#e8e4dc" stroke-width="1"/>
+          <line x1="50" y1="167" x2="770" y2="167" stroke="#e8e4dc" stroke-width="1"/>
+          <!-- Market size 72% h=144 -->
+          <rect x="80"  y="61"  width="68" height="144" fill="#0a0a0a"/>
+          <text x="114" y="55"  text-anchor="middle" font-size="11" fill="#0a0a0a" font-weight="700">72%</text>
+          <text x="114" y="222" text-anchor="middle" font-size="10" fill="#666">Market size</text>
+          <!-- Audience fit 90% h=180 -->
+          <rect x="194" y="25"  width="68" height="180" fill="#FFD000"/>
+          <text x="228" y="19"  text-anchor="middle" font-size="11" fill="#0a0a0a" font-weight="700">90%</text>
+          <text x="228" y="222" text-anchor="middle" font-size="10" fill="#666">Audience fit</text>
+          <!-- Emoji relevance 95% h=190 -->
+          <rect x="308" y="15"  width="68" height="190" fill="#FFD000"/>
+          <text x="342" y="9"   text-anchor="middle" font-size="11" fill="#0a0a0a" font-weight="700">95%</text>
+          <text x="342" y="222" text-anchor="middle" font-size="10" fill="#666">Emoji relevance</text>
+          <!-- Browser revival 58% h=116 -->
+          <rect x="422" y="89"  width="68" height="116" fill="#0a0a0a"/>
+          <text x="456" y="83"  text-anchor="middle" font-size="11" fill="#0a0a0a" font-weight="700">58%</text>
+          <text x="456" y="222" text-anchor="middle" font-size="10" fill="#666">Browser revival</text>
+          <!-- Zero friction advantage 88% h=176 -->
+          <rect x="536" y="29"  width="68" height="176" fill="#FFD000"/>
+          <text x="570" y="23"  text-anchor="middle" font-size="11" fill="#0a0a0a" font-weight="700">88%</text>
+          <text x="570" y="222" text-anchor="middle" font-size="10" fill="#666">Zero friction</text>
+          <!-- Competition intensity 55% h=110 (risk) -->
+          <rect x="650" y="95"  width="68" height="110" fill="#ff3c3c"/>
+          <text x="684" y="89"  text-anchor="middle" font-size="11" fill="#ff3c3c" font-weight="700">55%</text>
+          <text x="684" y="222" text-anchor="middle" font-size="10" fill="#ff3c3c">Competition</text>
+          <!-- Legend -->
+          <rect x="50" y="4" width="9" height="9" fill="#FFD000"/>
+          <text x="63" y="12" font-size="10" fill="#666">Favorable</text>
+          <rect x="130" y="4" width="9" height="9" fill="#0a0a0a"/>
+          <text x="143" y="12" font-size="10" fill="#666">Context</text>
+          <rect x="200" y="4" width="9" height="9" fill="#ff3c3c"/>
+          <text x="213" y="12" font-size="10" fill="#666">Risk factor</text>
+        </svg>
+      </div>
+      <p class="note">Qualitative scoring for illustrative purposes &mdash; not derived from quantitative research.</p>
+    </div>
+    <div class="psycho-block">
+      <div>
+        <div class="psycho-label">Trend 01</div>
+        <div class="psycho-title">Browser Games Revival</div>
+        <div class="psycho-body">Wordle proved the format: a browser game went from zero to 300k+ daily players in weeks (NYT, 2022). No-install games are a proven acquisition lever for Gen Z who reject app store friction.</div>
+      </div>
+      <div>
+        <div class="psycho-label">Trend 02</div>
+        <div class="psycho-title">Emoji as Cultural Syntax</div>
+        <div class="psycho-body">For Gen Z and Alpha, emoji are not decorative &mdash; they are a primary communication layer. Games built on emoji literacy feel native, not learned. This lowers cognitive barrier to first play significantly.</div>
+      </div>
+      <div>
+        <div class="psycho-label">Trend 03</div>
+        <div class="psycho-title">Micro-session Gaming</div>
+        <div class="psycho-body">Avg. hyper-casual session: 3&ndash;7 min (est.). A full Classic run is 3&ndash;8 min depending on skill. Shareable results at end of session fuel re-engagement loops and social spread.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 AUDIENCE -->
+<section id="audience">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-num">03</div>
+      <div>
+        <div class="section-title">Target Audience</div>
+        <div class="section-desc">Gen Z and Alpha &mdash; the two generations that grew up speaking emoji. Both are mobile-native, comfortable with speed challenges, and highly social.</div>
+      </div>
+    </div>
+    <div class="audience-grid">
+      <div class="audience-card">
+        <div class="audience-tag">Primary</div>
+        <div class="audience-gen">Gen Z</div>
+        <div class="audience-years">Born 1997&ndash;2012 &middot; Age 13&ndash;28</div>
+        <ul class="audience-traits">
+          <li><span>&#128241;</span><span>Mobile-first, browser-comfortable &mdash; grew up on web games pre-app era</span></li>
+          <li><span>&#9889;</span><span>High tolerance for speed games; competitive scoring motivates repeat play</span></li>
+          <li><span>&#128514;</span><span>Deep emoji fluency &mdash; they know the difference between &#128557; and &#129394; instinctively</span></li>
+          <li><span>&#128279;</span><span>Heavy sharers of game scores on Instagram, TikTok, Discord</span></li>
+          <li><span>&#9200;</span><span>Short sessions preferred; Daily Challenge fits daily routine</span></li>
+        </ul>
+        <div class="audience-fit">Best modes: Classic &middot; Daily &middot; Blind</div>
+      </div>
+      <div class="audience-card">
+        <div class="audience-tag">Secondary</div>
+        <div class="audience-gen">Alpha</div>
+        <div class="audience-years">Born 2013+ &middot; Age &lt;13</div>
+        <ul class="audience-traits">
+          <li><span>&#128241;</span><span>Fully mobile-native; touchscreen as default interface since birth</span></li>
+          <li><span>&#127918;</span><span>Game-as-social-space: plays with friends, parents, siblings &mdash; co-play moments</span></li>
+          <li><span>&#127758;</span><span>Emoji fluency even higher &mdash; visual language over text-heavy communication</span></li>
+          <li><span>&#127942;</span><span>Strong reward-seeking behavior; tier progression and records are highly motivating</span></li>
+          <li><span>&#128683;</span><span>No registration required &mdash; parental permission barriers bypassed entirely</span></li>
+        </ul>
+        <div class="audience-fit">Best modes: Classic &middot; No Timer &middot; Mastery</div>
+      </div>
+    </div>
+    <div class="psycho-block">
+      <div>
+        <div class="psycho-label">Psychology 01</div>
+        <div class="psycho-title">Speed + Score = Dopamine</div>
+        <div class="psycho-body">The 5-second countdown creates urgency. A fast correct tap delivers visual reward (+points flash in green) immediately. Fast input &rarr; immediate clear reward = core dopamine loop.</div>
+      </div>
+      <div>
+        <div class="psycho-label">Psychology 02</div>
+        <div class="psycho-title">Difficulty Ramp = Mastery Drive</div>
+        <div class="psycho-body">Tier progression from T5 (everyone knows &#128514;) to T1 (almost nobody knows &#129124; dodo) taps intrinsic motivation. Players feel smart at T5 and challenged at T2 &mdash; both states are addictive in different ways.</div>
+      </div>
+      <div>
+        <div class="psycho-label">Psychology 03</div>
+        <div class="psycho-title">Social Comparison = Virality</div>
+        <div class="psycho-body">Knowing your friends&rsquo; scores creates tension even in solo play. Daily Challenge is the biggest viral lever: same emoji set for everyone turns personal scores into social currency.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 MECHANICS -->
+<section id="mechanics">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-num">04</div>
+      <div>
+        <div class="section-title">Mechanics Analysis</div>
+        <div class="section-desc">Classic mode deep-dive: the core loop, scoring system, difficulty curve, and the full mode matrix.</div>
+      </div>
+    </div>
+    <div class="mechanic-overview">
+      <div>
+        <div class="mflow-title-top">Classic Mode &mdash; Core Loop</div>
+        <div class="mflow-step">
+          <div class="mflow-num">1</div>
+          <div class="mflow-content">
+            <div class="mflow-step-title">See Shortcode</div>
+            <div class="mflow-desc">A shortcode name appears: <code style="color:#FFD000; font-size:12px;">:fire:</code>. Player maps it to an emoji in memory.</div>
+          </div>
+        </div>
+        <div class="mflow-step">
+          <div class="mflow-num">2</div>
+          <div class="mflow-content">
+            <div class="mflow-step-title">5-Second Clock Runs</div>
+            <div class="mflow-desc">Multiplier counts down &#215;5.0 &rarr; &#215;0.0 in real time. Grid of 2&ndash;9 emoji waits for input.</div>
+          </div>
+        </div>
+        <div class="mflow-step">
+          <div class="mflow-num">3</div>
+          <div class="mflow-content">
+            <div class="mflow-step-title">Tap the Emoji</div>
+            <div class="mflow-desc">Correct &rarr; green flash, points awarded. Wrong &rarr; red flash, life lost, correct revealed.</div>
+          </div>
+        </div>
+        <div class="mflow-step">
+          <div class="mflow-num">4</div>
+          <div class="mflow-content">
+            <div class="mflow-step-title">Progress Through Rounds</div>
+            <div class="mflow-desc">5 puzzles per round. Grid grows, tier drops from T5 to T1. Game ends on 3rd life lost.</div>
+          </div>
+        </div>
+      </div>
+      <div class="mechanic-stats">
+        <div class="mstat">
+          <div class="mstat-label">Timer per puzzle</div>
+          <div class="mstat-value">5.0 sec</div>
+          <div class="mstat-sub">Multiplier = remaining seconds shown live</div>
+        </div>
+        <div class="mstat">
+          <div class="mstat-label">Lives</div>
+          <div class="mstat-value">3 &#10084;&#65039;</div>
+          <div class="mstat-sub">Game over on 3rd miss or timeout</div>
+        </div>
+        <div class="mstat">
+          <div class="mstat-label">Puzzles per round</div>
+          <div class="mstat-value">5</div>
+          <div class="mstat-sub">~6&ndash;8 rounds in a full run</div>
+        </div>
+        <div class="mstat">
+          <div class="mstat-label">Grid growth</div>
+          <div class="mstat-value">2 &#8594; 9 cells</div>
+          <div class="mstat-sub">R1: 2 cells, R3+: 4, R5+: 6, R7+: 9</div>
+        </div>
+        <div class="mstat">
+          <div class="mstat-label">Scoring</div>
+          <div class="mstat-value">Round &#215; 100 &#215; t</div>
+          <div class="mstat-sub">t = remaining seconds at tap time</div>
+        </div>
+      </div>
+    </div>
+    <div class="scoring-formula">
+      <div class="sf-label">Scoring Formula &mdash; Classic Mode</div>
+      <div class="sf-formula">Points = <em>Round</em> &#215; 100 &#215; <em>remaining_seconds</em></div>
+      <div class="sf-note">
+        Example: Correct tap at Round 6, 3.8s remaining &rarr; 6 &#215; 100 &#215; 3.8 = <strong>2,280 pts</strong>.<br>
+        Same tap at 0.5s remaining &rarr; 6 &#215; 100 &#215; 0.5 = <strong>300 pts</strong>. Speed matters enormously &mdash; this is what creates skilled-player differentiation and drives replayability.
+      </div>
+    </div>
+    <div style="margin-bottom:32px;">
+      <div class="label" style="margin-bottom:14px;">Emoji Tier System &mdash; Difficulty Progression</div>
+      <table class="tier-table">
+        <thead><tr><th>Tier</th><th>Label</th><th>Example emoji</th><th>Intro round</th><th>Pool size</th><th>Est. recognition</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tier-dot" style="background:#FF6B6B"></span><strong>T5</strong></td><td>Popular</td><td>&#128514; &#10084;&#65039; &#128293; &#128557; &#10024; &#128077;</td><td>Round 1&ndash;3</td><td>~100</td><td>~95% of Gen Z</td></tr>
+          <tr><td><span class="tier-dot" style="background:#FFD93D"></span><strong>T4</strong></td><td>Known</td><td>&#127752; &#128081; &#127918; &#129412; &#127942; &#128142;</td><td>Round 4&ndash;6</td><td>~120</td><td>~75%</td></tr>
+          <tr><td><span class="tier-dot" style="background:#6BCB77"></span><strong>T3</strong></td><td>Typical</td><td>&#129402; &#129498; &#127808; &#127754; &#129416; &#128760;</td><td>Round 7&ndash;9</td><td>~80</td><td>~50%</td></tr>
+          <tr><td><span class="tier-dot" style="background:#4D96FF"></span><strong>T2</strong></td><td>Rare</td><td>&#129388; &#127647; &#129386; &#9882;&#65039; &#9965; &#8734;&#65039;</td><td>Round 10&ndash;12</td><td>~70</td><td>~25%</td></tr>
+          <tr><td><span class="tier-dot" style="background:#C77DFF"></span><strong>T1</strong></td><td>Niche</td><td>&#129124; &#129379; &#128506; &#129259; &#128170; &#128089;</td><td>Round 13+</td><td>~50</td><td>~5&ndash;10%</td></tr>
+          <tr><td><span class="tier-dot" style="background:#B0BEC5"></span><strong>T0</strong></td><td>Unknown</td><td>&#127462;&#127464; &#9800; &#128402; &#128286; &#9728;&#65039;</td><td>Distractor only</td><td>600+</td><td>Used as red herrings</td></tr>
+        </tbody>
+      </table>
+      <p class="note">T0 emoji appear as distractors in grids of 4+ cells but are never the correct answer. Recognition rates are author estimates.</p>
+    </div>
+    <div class="label" style="margin-bottom:14px;">All 6 Game Modes</div>
+    <div class="modes-grid">
+      <div class="mode-block primary">
+        <div class="mode-icon">&#127919;</div>
+        <div class="mode-name">Classic</div>
+        <div class="mode-desc">Core mode. Shortcode shown &rarr; tap the emoji. 5s timer, 3 lives. Difficulty ramps T5 &rarr; T1. Speed multiplier rewards fast, accurate taps.</div>
+        <div class="mode-tag tag-core">Core</div>
+      </div>
+      <div class="mode-block">
+        <div class="mode-icon">&#128197;</div>
+        <div class="mode-name">Daily Challenge</div>
+        <div class="mode-desc">15 emoji seeded by date &mdash; same for all players worldwide. Play once per day. Streak counter drives habit. Best social comparison mechanic in the game.</div>
+        <div class="mode-tag tag-daily">Viral loop</div>
+      </div>
+      <div class="mode-block">
+        <div class="mode-icon">&#129504;</div>
+        <div class="mode-name">Emoji Mastery</div>
+        <div class="mode-desc">Adaptive weighted algorithm shows struggling emoji more often. Mastery counter tracks progress per emoji. Turns the game into a learning tool.</div>
+        <div class="mode-tag tag-skill">Learning</div>
+      </div>
+      <div class="mode-block">
+        <div class="mode-icon">&#128584;</div>
+        <div class="mode-name">Blind</div>
+        <div class="mode-desc">Name is hidden (masked as ***). Tap what you think it is &mdash; name reveals on tap before scoring. Tests pure emoji visual memory without name cues.</div>
+        <div class="mode-tag tag-core">Advanced</div>
+      </div>
+      <div class="mode-block">
+        <div class="mode-icon">&#9854;&#65039;</div>
+        <div class="mode-name">No Timer</div>
+        <div class="mode-desc">Timer and multiplier removed. Flat scoring: Round &#215; 200 per correct answer. Lower pressure &mdash; suits younger players (Alpha) or casual exploration.</div>
+        <div class="mode-tag tag-skill">Relaxed</div>
+      </div>
+      <div class="mode-block">
+        <div class="mode-icon">&#128260;</div>
+        <div class="mode-name">Reverse</div>
+        <div class="mode-desc">Inverted: see the emoji, pick the correct shortcode name from 4 text choices. Tests conceptual recall rather than visual recognition &mdash; a fundamentally different challenge.</div>
+        <div class="mode-tag tag-core">Variant</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 COMPETITIVE -->
+<section id="competitive">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-num">05</div>
+      <div>
+        <div class="section-title">Competitive Landscape</div>
+        <div class="section-desc">Direct and indirect competitors mapped against key product dimensions. Tap Tap Emoji&rsquo;s differentiator: speed mechanics + emoji depth combined.</div>
+      </div>
+    </div>
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead><tr><th>Product</th><th>Type</th><th>Platform</th><th>Speed timer</th><th>Emoji focus</th><th>Zero friction</th><th>Daily mode</th><th>Monetization</th></tr></thead>
+        <tbody>
+          <tr class="hl"><td class="comp-name">&#127919; Tap Tap Emoji</td><td>Emoji speed game</td><td>Browser</td><td><span class="chip chip-yes">Yes</span></td><td><span class="chip chip-yes">Yes</span></td><td><span class="chip chip-yes">Yes</span></td><td><span class="chip chip-yes">Yes</span></td><td>None (pre-revenue)</td></tr>
+          <tr><td class="comp-name">&#129137; Wordle (NYT)</td><td>Word guessing</td><td>Browser</td><td><span class="chip chip-no">No</span></td><td><span class="chip chip-no">No</span></td><td><span class="chip chip-yes">Yes</span></td><td><span class="chip chip-yes">Yes</span></td><td>NYT subscription</td></tr>
+          <tr><td class="comp-name">&#128483; Emojle</td><td>Emoji / Wordle-style</td><td>Browser</td><td><span class="chip chip-no">No</span></td><td><span class="chip chip-yes">Yes</span></td><td><span class="chip chip-yes">Yes</span></td><td><span class="chip chip-yes">Yes</span></td><td>Free</td></tr>
+          <tr><td class="comp-name">&#9000;&#65039; TypeRacer</td><td>Speed typing</td><td>Browser</td><td><span class="chip chip-yes">Yes</span></td><td><span class="chip chip-no">No</span></td><td><span class="chip chip-yes">Yes</span></td><td><span class="chip chip-no">No</span></td><td>Freemium</td></tr>
+          <tr><td class="comp-name">&#127914; Kahoot</td><td>Trivia / quiz</td><td>Browser + App</td><td><span class="chip chip-part">Partial</span></td><td><span class="chip chip-no">No</span></td><td><span class="chip chip-no">No</span></td><td><span class="chip chip-no">No</span></td><td>Freemium / B2B</td></tr>
+          <tr><td class="comp-name">&#128205; GeoGuessr</td><td>Geography guess</td><td>Browser</td><td><span class="chip chip-part">Optional</span></td><td><span class="chip chip-no">No</span></td><td><span class="chip chip-no">No</span></td><td><span class="chip chip-part">Partial</span></td><td>Subscription</td></tr>
+          <tr><td class="comp-name">&#128027; EmojiQuiz apps</td><td>Emoji trivia (generic)</td><td>App</td><td><span class="chip chip-no">No</span></td><td><span class="chip chip-yes">Yes</span></td><td><span class="chip chip-no">No</span></td><td><span class="chip chip-no">No</span></td><td>Ads / IAP</td></tr>
+        </tbody>
+      </table>
+      <p class="note">Tap Tap Emoji row highlighted. Competitive data based on publicly available product information as of May 2025.</p>
+    </div>
+    <div class="pm-box">
+      <div class="pm-title">Positioning Map &mdash; Speed vs. Emoji Depth</div>
+      <svg viewBox="0 0 660 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:'Barlow Condensed',sans-serif">
+        <rect x="36" y="16" width="292" height="174" fill="#f8f8f6" rx="0"/>
+        <rect x="328" y="16" width="300" height="174" fill="#fffde7" rx="0"/>
+        <rect x="36" y="190" width="292" height="174" fill="#f8f8f6" rx="0"/>
+        <rect x="328" y="190" width="300" height="174" fill="#fff6f6" rx="0"/>
+        <line x1="36" y1="190" x2="628" y2="190" stroke="#0a0a0a" stroke-width="2"/>
+        <line x1="330" y1="16" x2="330" y2="364" stroke="#0a0a0a" stroke-width="2"/>
+        <text x="330" y="380" text-anchor="middle" font-size="12" fill="#333" font-weight="700">&#8592; Low emoji depth &nbsp;&nbsp; High emoji depth &#8594;</text>
+        <text x="16" y="190" text-anchor="middle" font-size="12" fill="#333" font-weight="700" transform="rotate(-90 16 190)">&#8592; Slow / no timer &nbsp;&nbsp; Fast / timed &#8594;</text>
+        <text x="180" y="38"  text-anchor="middle" font-size="10" fill="#bbb" letter-spacing="1" font-weight="700">FAST + SHALLOW</text>
+        <text x="478" y="38"  text-anchor="middle" font-size="10" fill="#aa7700" letter-spacing="1" font-weight="700">FAST + DEEP &#9733;</text>
+        <text x="180" y="362" text-anchor="middle" font-size="10" fill="#bbb" letter-spacing="1" font-weight="700">SLOW + SHALLOW</text>
+        <text x="478" y="362" text-anchor="middle" font-size="10" fill="#bbb" letter-spacing="1" font-weight="700">SLOW + DEEP</text>
+        <!-- TypeRacer -->
+        <circle cx="130" cy="82" r="11" fill="#777"/>
+        <text cx="130" cy="86" text-anchor="middle" font-size="9" fill="white" font-weight="700">TR</text>
+        <text cx="130" cy="69" text-anchor="middle" font-size="10" fill="#555">TypeRacer</text>
+        <!-- Kahoot -->
+        <circle cx="185" cy="140" r="11" fill="#777"/>
+        <text cx="185" cy="144" text-anchor="middle" font-size="9" fill="white" font-weight="700">KH</text>
+        <text cx="185" cy="127" text-anchor="middle" font-size="10" fill="#555">Kahoot</text>
+        <!-- Wordle -->
+        <circle cx="190" cy="285" r="11" fill="#777"/>
+        <text cx="190" cy="289" text-anchor="middle" font-size="9" fill="white" font-weight="700">WD</text>
+        <text cx="190" cy="272" text-anchor="middle" font-size="10" fill="#555">Wordle</text>
+        <!-- GeoGuessr -->
+        <circle cx="130" cy="240" r="11" fill="#777"/>
+        <text cx="130" cy="244" text-anchor="middle" font-size="9" fill="white" font-weight="700">GG</text>
+        <text cx="130" cy="227" text-anchor="middle" font-size="10" fill="#555">GeoGuessr</text>
+        <!-- Emojle -->
+        <circle cx="510" cy="295" r="11" fill="#777"/>
+        <text cx="510" cy="299" text-anchor="middle" font-size="9" fill="white" font-weight="700">EM</text>
+        <text cx="510" cy="282" text-anchor="middle" font-size="10" fill="#555">Emojle</text>
+        <!-- EmojiQuiz -->
+        <circle cx="455" cy="265" r="11" fill="#777"/>
+        <text cx="455" cy="269" text-anchor="middle" font-size="9" fill="white" font-weight="700">EQ</text>
+        <text cx="455" cy="252" text-anchor="middle" font-size="10" fill="#555">EmojiQuiz</text>
+        <!-- TAP TAP EMOJI -->
+        <circle cx="500" cy="72" r="18" fill="#FFD000"/>
+        <text cx="500" cy="77" text-anchor="middle" font-size="10" fill="#0a0a0a" font-weight="700">TTE</text>
+        <text cx="500" cy="54" text-anchor="middle" font-size="12" fill="#0a0a0a" font-weight="700">Tap Tap Emoji</text>
+        <ellipse cx="495" cy="88" rx="110" ry="72" fill="none" stroke="#FFD000" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.5"/>
+        <text cx="614" cy="55" text-anchor="end" font-size="10" fill="#aa7700" font-style="italic">Unique position</text>
+      </svg>
+      <p class="note">Qualitative positioning based on feature comparison above. No user research data available at this stage.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 DISTRIBUTION -->
+<section id="distribution">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-num">06</div>
+      <div>
+        <div class="section-title">Distribution &amp; Discovery</div>
+        <div class="section-desc">How Tap Tap Emoji reaches players &mdash; current state and near-term opportunities across channels.</div>
+      </div>
+    </div>
+    <div class="dist-grid">
+      <div class="dist-card">
+        <div class="dist-icon">&#128279;</div>
+        <div class="dist-title">Direct Link Share</div>
+        <div class="dist-body">URL shared via WhatsApp, Messenger, iMessage. OG preview card (Facebook, Twitter) already implemented. Score screenshot sharing not yet built &mdash; a significant gap.</div>
+        <div class="dist-potential"><span class="dp-label">Potential</span><div class="dots"><div class="dot-f"></div><div class="dot-f"></div><div class="dot-f"></div><div class="dot-f"></div><div class="dot-e"></div></div></div>
+      </div>
+      <div class="dist-card">
+        <div class="dist-icon">&#128247;</div>
+        <div class="dist-title">Social Media</div>
+        <div class="dist-body">TikTok and Instagram Reels are primary Gen Z discovery channels. A 15-second gameplay clip of T1 niche emoji could spread organically. &ldquo;What tier can you reach?&rdquo; is a proven challenge format.</div>
+        <div class="dist-potential"><span class="dp-label">Potential</span><div class="dots"><div class="dot-f"></div><div class="dot-f"></div><div class="dot-f"></div><div class="dot-f"></div><div class="dot-f"></div></div></div>
+      </div>
+      <div class="dist-card">
+        <div class="dist-icon">&#128197;</div>
+        <div class="dist-title">Daily Challenge Loop</div>
+        <div class="dist-body">Same 15 emoji for everyone each day. &ldquo;I got 12,480 &mdash; beat that&rdquo; is shareable content. Currently lacks a dedicated share card &mdash; adding one would unlock Wordle-style viral mechanics.</div>
+        <div class="dist-potential"><span class="dp-label">Potential</span><div class="dots"><div class="dot-f"></div><div class="dot-f"></div><div class="dot-f"></div><div class="dot-f"></div><div class="dot-f"></div></div></div>
+      </div>
+      <div class="dist-card">
+        <div class="dist-icon">&#128269;</div>
+        <div class="dist-title">SEO / Organic Search</div>
+        <div class="dist-body">Currently weak &mdash; GitHub Pages domain has low SEO authority. Queries like &ldquo;emoji quiz browser&rdquo;, &ldquo;emoji speed game&rdquo; are low-competition. Custom domain + landing page would help significantly.</div>
+        <div class="dist-potential"><span class="dp-label">Potential</span><div class="dots"><div class="dot-f"></div><div class="dot-f"></div><div class="dot-e"></div><div class="dot-e"></div><div class="dot-e"></div></div></div>
+      </div>
+      <div class="dist-card">
+        <div class="dist-icon">&#127891;</div>
+        <div class="dist-title">Education Channel</div>
+        <div class="dist-body">Emoji Mastery mode suits classroom use. Teachers can use it for digital literacy or warm-up activities. No account required = zero friction for students. Kahoot proved this distribution model.</div>
+        <div class="dist-potential"><span class="dp-label">Potential</span><div class="dots"><div class="dot-f"></div><div class="dot-f"></div><div class="dot-f"></div><div class="dot-e"></div><div class="dot-e"></div></div></div>
+      </div>
+      <div class="dist-card">
+        <div class="dist-icon">&#128172;</div>
+        <div class="dist-title">Discord / Communities</div>
+        <div class="dist-body">Gen Z Discord servers are an underexplored channel. A &ldquo;post your daily score&rdquo; culture in emoji/gaming servers could drive consistent daily traffic. No Discord integration currently.</div>
+        <div class="dist-potential"><span class="dp-label">Potential</span><div class="dots"><div class="dot-f"></div><div class="dot-f"></div><div class="dot-f"></div><div class="dot-e"></div><div class="dot-e"></div></div></div>
+      </div>
+    </div>
+    <div class="key-findings" style="padding:32px 40px;">
+      <div class="key-findings-title">Biggest Untapped Distribution Lever</div>
+      <p style="color:rgba(255,255,255,0.8);font-size:15px;line-height:1.7;max-width:660px;">
+        A <strong style="color:var(--accent)">shareable score card</strong> &mdash; a styled text/image generated after each Daily Challenge run &mdash; could be the single highest-impact addition. Like Wordle&rsquo;s colored squares, users paste their result into Twitter, Instagram Stories, and group chats. This turns every completed game into an acquisition event. Estimated cost: 1&ndash;2 days development. Potential payoff: 3&ndash;10&#215; daily active users within weeks of a viral moment.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 MONETIZATION -->
+<section id="monetization">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-num">07</div>
+      <div>
+        <div class="section-title">Monetization Models</div>
+        <div class="section-desc">Currently zero revenue. Three credible paths forward &mdash; ordered by implementation complexity and fit with Gen Z / Alpha.</div>
+      </div>
+    </div>
+    <div class="mono-grid">
+      <div class="mono-card ph1a">
+        <div class="mono-phase">Phase 1 &mdash; Low complexity</div>
+        <div class="mono-title">Interstitial Ads</div>
+        <div class="mono-body">Show a 5-second ad between rounds (never mid-puzzle). Gen Z tolerates ads in free games if brief and non-intrusive. Mobile ad networks (Google AdMob) support browser via script. <strong>Est. CPM: $1&ndash;4 for casual game audience.</strong></div>
+        <div class="mono-complexity">Complexity: Low &middot; Risk: Medium (ad blockers)</div>
+      </div>
+      <div class="mono-card ph1b">
+        <div class="mono-phase">Phase 1 &mdash; Low complexity</div>
+        <div class="mono-title">Ad-Free Purchase</div>
+        <div class="mono-body">Offer &ldquo;Ad-free forever&rdquo; via a simple payment link (Ko-fi, Stripe). No account required &mdash; use localStorage for purchase flag. <strong>Price point: $1.99&ndash;3.99.</strong> Gen Z converts on low-effort micro-purchases when they value the product.</div>
+        <div class="mono-complexity">Complexity: Low &middot; Risk: Low</div>
+      </div>
+      <div class="mono-card">
+        <div class="mono-phase">Phase 2 &mdash; Depth extension</div>
+        <div class="mono-title">Mastery Premium</div>
+        <div class="mono-body">Unlock personal analytics (&ldquo;Your 10 weakest emoji&rdquo;, &ldquo;30-day progress chart&rdquo;), exportable mastery cards, and custom learning sets. Positions game as a learning tool for education market. <strong>Price: $2.99&ndash;5.99 one-time.</strong></div>
+        <div class="mono-complexity">Complexity: Medium &middot; Risk: Low</div>
+      </div>
+      <div class="mono-card">
+        <div class="mono-phase">Phase 2 &mdash; Viral extension</div>
+        <div class="mono-title">Async Duel Mode</div>
+        <div class="mono-body">Async duels via shareable link &mdash; &ldquo;I scored 14,200 on this set, beat it&rdquo;. No live server needed (state encoded in URL). <strong>Optional: paid custom duel creation ($0.99).</strong> High virality potential, low infrastructure cost.</div>
+        <div class="mono-complexity">Complexity: Medium &middot; Risk: Low</div>
+      </div>
+    </div>
+    <div class="scoring-formula" style="border-color:var(--accent3);">
+      <div class="sf-label">Note on Gen Z Monetization Psychology</div>
+      <div class="sf-formula" style="font-size:20px;font-weight:600;">Gen Z pays for <em>expression</em> and <em>identity</em>, not features.</div>
+      <div class="sf-note">Skins, custom emoji sets, profile badges, or themed UI packs have higher perceived value to Gen Z than functional unlocks. A &ldquo;Vaporwave skin&rdquo; IAP at $0.99 may outperform &ldquo;Remove ads&rdquo; at $1.99 &mdash; even if the latter has more rational value. For Alpha, gifting (parent buys a skin for their child) is a viable model once user base is established. The current Pixel Arcade aesthetic is already a strong brand identity to build cosmetics on.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 OPPORTUNITIES & RISKS -->
+<section id="opportunities">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-num">08</div>
+      <div>
+        <div class="section-title">Opportunities &amp; Risks</div>
+        <div class="section-desc">Prioritized growth opportunities and risks to manage, based on mechanics analysis and competitive landscape review.</div>
+      </div>
+    </div>
+    <div class="opp-grid">
+      <div>
+        <div class="opp-col-title green">Growth Opportunities</div>
+        <ul class="opp-list">
+          <li class="opp-item h"><strong>Shareable Daily Score Card</strong>Generate a styled result after Daily Challenge (score, tier reached, emoji set). Wordle&rsquo;s viral model &mdash; proven and low-cost to implement. Single highest-ROI feature.</li>
+          <li class="opp-item h"><strong>Custom Domain + Landing Page</strong>Move off GitHub Pages. Add SEO-optimized copy targeting &ldquo;emoji quiz browser&rdquo;, &ldquo;emoji speed game&rdquo;. Estimated 2&ndash;5&#215; organic traffic within 6 months.</li>
+          <li class="opp-item m"><strong>TikTok / Reels Content</strong>A &ldquo;I reached T1 NICHE&rdquo; screen-record clip could go viral organically. Minimal production. Gen Z discovery is algorithm-driven &mdash; one good clip = significant acquisition.</li>
+          <li class="opp-item m"><strong>Multiplayer Challenge Links</strong>Async 1v1 duel links. Massive viral activation potential with minimal server cost. &ldquo;I scored X, beat it&rdquo; drives social re-engagement loops.</li>
+          <li class="opp-item m"><strong>Education Channel</strong>Emoji Mastery positioned as digital literacy tool for ages 8&ndash;14. Could reach school networks, EdTech newsletters, parenting communities.</li>
+          <li class="opp-item lo"><strong>Discord Bot Integration</strong>Post Daily Challenge results to Discord servers. Creates daily touchpoint in emoji/gaming communities. Low cost, steady traffic.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="opp-col-title red">Risks to Manage</div>
+        <ul class="opp-list">
+          <li class="opp-item rh"><strong>Copycat Risk</strong>Mechanic (shortcode &rarr; emoji, speed timer) is simple to clone. Moat must come from community, daily data, brand &mdash; not mechanics. Speed to distribution matters.</li>
+          <li class="opp-item rh"><strong>No Native App</strong>Browser games have lower retention than apps (no home screen icon, no push notifications). Browser is an acquisition advantage but a retention disadvantage.</li>
+          <li class="opp-item rm"><strong>Emoji Standard Changes</strong>Unicode adds ~10&ndash;20 emoji/year. Pool and tier system require annual curation to stay culturally relevant. Stale content = disengagement.</li>
+          <li class="opp-item rm"><strong>Shortcode Literacy Gap</strong>Shortcode names (<code>:fire:</code>) are unfamiliar to first-time players, especially Alpha. Learning curve may cause first-session drop-off. Onboarding tutorial is critical.</li>
+          <li class="opp-item rm"><strong>Single-Player Ceiling</strong>Without social features, engagement plateaus after a player masters the emoji pool. Multiplayer or community features are the primary ceiling-breaker.</li>
+          <li class="opp-item rm"><strong>GitHub Pages Reliability</strong>Current hosting is a single point of failure with no CDN guarantee. A viral moment could degrade performance. Move to reliable hosting before any growth push.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="label" style="margin-bottom:14px;margin-top:40px;">Prioritized Recommendations</div>
+    <div class="rec-list">
+      <div class="rec-item">
+        <div class="rec-num">1</div>
+        <div class="rec-content">
+          <div class="rec-title">Build the Daily Challenge share card</div>
+          <div class="rec-desc">Generate a shareable text block or image after Daily mode: score, tier reached, emoji pattern, streak. Every completed game becomes a distribution event. Single highest-impact near-term feature.</div>
+        </div>
+        <div class="rec-effort">Effort: Low<br>Impact: Very High</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-num">2</div>
+        <div class="rec-content">
+          <div class="rec-title">Get a custom domain</div>
+          <div class="rec-desc">Move from github.io to a proper domain (~$10/yr). Add a landing page with SEO-optimized copy. Required before any press mention or serious growth push.</div>
+        </div>
+        <div class="rec-effort">Effort: Very Low<br>Impact: High</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-num">3</div>
+        <div class="rec-content">
+          <div class="rec-title">Add a first-play onboarding tutorial</div>
+          <div class="rec-desc">The shortcode format (<code>:fire:</code>) is unfamiliar to first-timers, especially Alpha. A 3-step interactive tutorial before first Classic game reduces first-session drop-off significantly.</div>
+        </div>
+        <div class="rec-effort">Effort: Medium<br>Impact: Medium</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-num">4</div>
+        <div class="rec-content">
+          <div class="rec-title">Ship a TikTok gameplay clip</div>
+          <div class="rec-desc">Record T1/T2 gameplay with honest reaction. Post with hooks like &ldquo;How many niche emoji do YOU know? &#129504;&rdquo;. Low production cost, potential organic reach to exactly the right audience.</div>
+        </div>
+        <div class="rec-effort">Effort: Low<br>Impact: High</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-num">5</div>
+        <div class="rec-content">
+          <div class="rec-title">Prototype async challenge links</div>
+          <div class="rec-desc">Generate a URL encoding a specific emoji set + target score. &ldquo;I got 14,200 on this set &mdash; can you beat it?&rdquo; No live server needed &mdash; state encoded in URL hash. Pure viral loop.</div>
+        </div>
+        <div class="rec-effort">Effort: Medium<br>Impact: High</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div><span>Tap Tap Emoji</span> &mdash; Market Analysis &middot; May 2025 &middot; English</div>
+  <div>Portfolio document &middot; piotrekslowik.github.io/taptapemoji</div>
+</footer>
+
+</body>
+</html>
